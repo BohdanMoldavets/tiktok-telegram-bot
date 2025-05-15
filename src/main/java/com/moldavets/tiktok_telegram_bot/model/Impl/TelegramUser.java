@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "telegram_users")
 public class TelegramUser extends AbstractAuditingEntity<Long> {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -19,13 +18,17 @@ public class TelegramUser extends AbstractAuditingEntity<Long> {
     @Column(name = "status")
     private ConditionStatus status;
 
+    @Column(name = "is_subscribed")
+    private Boolean isSubscribed;
+
     public TelegramUser() {
     }
 
-    public TelegramUser(Long id, String username, ConditionStatus status) {
+    public TelegramUser(Long id, String username, ConditionStatus status, Boolean isSubscribed) {
         this.id = id;
         this.username = username;
         this.status = status;
+        this.isSubscribed = isSubscribed;
     }
 
     @Override
@@ -51,5 +54,13 @@ public class TelegramUser extends AbstractAuditingEntity<Long> {
 
     public void setStatus(ConditionStatus status) {
         this.status = status;
+    }
+
+    public Boolean getSubscribed() {
+        return isSubscribed;
+    }
+
+    public void setSubscribed(Boolean subscribed) {
+        isSubscribed = subscribed;
     }
 }

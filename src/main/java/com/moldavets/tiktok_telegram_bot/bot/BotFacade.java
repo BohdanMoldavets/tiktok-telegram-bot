@@ -1,6 +1,9 @@
 package com.moldavets.tiktok_telegram_bot.bot;
 
 import com.moldavets.tiktok_telegram_bot.command.CommandContainer;
+import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
+import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -10,8 +13,9 @@ public class BotFacade {
 
     private final CommandContainer commandContainer;
 
-    public BotFacade() {
-        this.commandContainer = new CommandContainer();
+    @Autowired
+    public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService) {
+        this.commandContainer = new CommandContainer(telegramUserService, telegramChannelService);
     }
 
     public BotApiMethod<?> processUpdate(Update update) {
