@@ -8,12 +8,14 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
-public class TikTokTelegramBot extends TelegramLongPollingBot implements TelegramBot{
+public class TikTokTelegramBot extends TelegramLongPollingBot implements TelegramBot {
 
     @Lazy
     @Autowired
@@ -27,8 +29,7 @@ public class TikTokTelegramBot extends TelegramLongPollingBot implements Telegra
 
     @Override
     public void onUpdateReceived(Update update) {
-        BotApiMethod<?> response = botFacade.processUpdate(update);
-
+        BotApiMethod<?> response = new GetChatMember();
         try {
             execute(response);
         } catch (TelegramApiException e) {
