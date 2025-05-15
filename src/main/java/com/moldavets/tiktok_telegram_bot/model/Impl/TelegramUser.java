@@ -2,19 +2,21 @@ package com.moldavets.tiktok_telegram_bot.model.Impl;
 
 import com.moldavets.tiktok_telegram_bot.model.AbstractAuditingEntity;
 import com.moldavets.tiktok_telegram_bot.model.ConditionStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "telegram_users")
 public class TelegramUser extends AbstractAuditingEntity<Long> {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "username")
     private String username;
 
+    @Column(name = "status")
     private ConditionStatus status;
 
     public TelegramUser() {
