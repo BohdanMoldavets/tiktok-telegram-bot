@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 @Table(name = "telegram_users")
 public class TelegramUser extends AbstractAuditingEntity<Long> {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
 

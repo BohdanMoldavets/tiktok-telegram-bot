@@ -6,4 +6,9 @@ public interface TelegramUserService {
 
     TelegramUser getById(Long id);
 
+    void checkTelegramUserRegistration(Long userId, String username);
+
+    void save(TelegramUser telegramUser);
+
+    void updateLastModifiedDateById(Long id);
 }

@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class BotFacade {
 
     private final CommandContainer commandContainer;
+    private final String COMMAND_PREFIX = "/";
 
     @Autowired
     public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService) {
@@ -21,7 +22,7 @@ public class BotFacade {
     public BotApiMethod<?> processUpdate(Update update) {
         if(update.hasMessage() && update.getMessage().hasText()) {
             String command = update.getMessage().getText().trim();
-            return commandContainer.retrieveCommand(command).execute(update);
+            return command.startsWith(COMMAND_PREFIX) ? commandContainer.retrieveCommand(command).execute(update) : null;
         }
         return null;
     }
