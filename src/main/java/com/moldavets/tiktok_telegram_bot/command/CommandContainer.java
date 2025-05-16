@@ -9,7 +9,6 @@ import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 import java.util.Map;
 
 public class CommandContainer {
-    private final String TIKTOK_LINK_PATTERN = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)";
 
     private final Map<String, Command> COMMAND_MAP;
 

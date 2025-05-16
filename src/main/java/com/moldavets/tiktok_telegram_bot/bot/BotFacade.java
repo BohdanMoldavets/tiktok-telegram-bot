@@ -11,8 +11,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 public class BotFacade {
 
-    private final CommandContainer commandContainer;
     private final String COMMAND_PREFIX = "/";
+
+    private final CommandContainer commandContainer;
 
     @Autowired
     public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService) {
