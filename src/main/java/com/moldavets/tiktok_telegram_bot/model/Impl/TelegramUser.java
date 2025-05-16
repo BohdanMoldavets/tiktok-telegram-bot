@@ -55,7 +55,7 @@ public class TelegramUser extends AbstractAuditingEntity<Long> {
         this.status = status;
     }
 
-    public Boolean getSubscribed() {
+    public Boolean isSubscribed() {
         return isSubscribed;
     }
 
