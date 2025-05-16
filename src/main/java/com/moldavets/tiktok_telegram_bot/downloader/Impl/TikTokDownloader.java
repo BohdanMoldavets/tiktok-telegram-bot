@@ -8,7 +8,6 @@ import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 public class TikTokDownloader implements Downloader {
 
@@ -34,7 +33,7 @@ public class TikTokDownloader implements Downloader {
         }
 
         SendMessage message = new SendMessage(userId.toString(), MESSAGE);
-        message.setReplyMarkup(KeyboardContainer.getChannelsToSubscribeKeyboard(telegramChannelService));
+//        message.setReplyMarkup(KeyboardContainer.getChannelsToSubscribeKeyboard(telegramChannelService));
         return message;
     }
 }

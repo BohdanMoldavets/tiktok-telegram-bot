@@ -12,7 +12,6 @@ public class StartCommand implements Command {
 
     private final String MESSAGE = "Hello!!! Please send your tiktok link to download";
 
-
     public StartCommand(TelegramUserService telegramUserService) {
         this.telegramUserService = telegramUserService;
     }
