@@ -5,9 +5,11 @@ import com.moldavets.tiktok_telegram_bot.callback.CallbackHandler;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramChannel;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -41,6 +43,15 @@ public class SubscriptionCheckerCallbackHandler implements CallbackHandler {
                 throw new RuntimeException(e);
             }
         }
-        return new SendMessage(callbackQuery.getFrom().getId().toString(), result ? "Subscription OK" : "Subscription Failed");
+        if(result) {
+            try {
+                telegramBot.execute(new DeleteMessage(callbackQuery.getFrom().getId().toString(),callbackQuery.getMessage().getMessageId()));
+                return new SendMessage(callbackQuery.getFrom().getId().toString(), "Now you can download tiktok");
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        }
+//        return new AnswerCallbackQuery(String callbackQueryId, String text, Boolean showAlert, String url, Integer cacheTime)
+        return new SendMessage(callbackQuery.getFrom().getId().toString(), "Subscription Failed");
     }
 }

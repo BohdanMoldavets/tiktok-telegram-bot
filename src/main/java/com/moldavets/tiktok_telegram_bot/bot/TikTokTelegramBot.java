@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -54,6 +55,11 @@ public class TikTokTelegramBot extends TelegramLongPollingBot implements Telegra
     @Override
     public void execute(AnswerCallbackQuery answerCallbackQuery) throws TelegramApiException {
         super.execute(answerCallbackQuery);
+    }
+
+    @Override
+    public void execute(DeleteMessage deleteMessage) throws TelegramApiException {
+        super.execute(deleteMessage);
     }
 
     @Override
