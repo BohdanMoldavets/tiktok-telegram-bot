@@ -21,10 +21,10 @@ public class BotFacade {
     private final CallbackFacade callbackFacade;
 
     @Autowired
-    public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService) {
+    public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService, TelegramBot telegramBot) {
         this.commandContainer = new CommandContainer(telegramUserService, telegramChannelService);
         this.downloaderContainer = new DownloaderContainer(telegramUserService, telegramChannelService);
-        this.callbackFacade = new CallbackFacade(telegramUserService, telegramChannelService);
+        this.callbackFacade = new CallbackFacade(telegramUserService, telegramChannelService, telegramBot);
     }
 
     public BotApiMethod<?> processUpdate(Update update) {
