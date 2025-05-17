@@ -23,7 +23,7 @@ public class BotFacade {
     @Autowired
     public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService, TelegramBot telegramBot) {
         this.commandContainer = new CommandContainer(telegramUserService, telegramChannelService);
-        this.downloaderContainer = new DownloaderContainer(telegramUserService, telegramChannelService);
+        this.downloaderContainer = new DownloaderContainer(telegramUserService, telegramChannelService, telegramBot);
         this.callbackFacade = new CallbackFacade(telegramUserService, telegramChannelService, telegramBot);
     }
 

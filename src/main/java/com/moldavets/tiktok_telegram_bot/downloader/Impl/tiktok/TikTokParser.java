@@ -1,0 +1,28 @@
+package com.moldavets.tiktok_telegram_bot.downloader.Impl.tiktok;
+
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public final class TikTokParser {
+
+    private TikTokParser() {}
+
+    public static InputFile parse(String url){
+        try {
+            URL destinationUrl = new URL(url);
+
+            HttpURLConnection connection = (HttpURLConnection) destinationUrl.openConnection();
+            connection.setRequestMethod("GET");
+            InputStream inputStream = connection.getInputStream();
+
+            return new InputFile(inputStream, "tiktok_video.mp4");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+}

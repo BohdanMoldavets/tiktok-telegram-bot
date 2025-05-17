@@ -9,10 +9,13 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.List;
 
 @Component
 public class TikTokTelegramBot extends TelegramLongPollingBot implements TelegramBot {
@@ -50,6 +53,11 @@ public class TikTokTelegramBot extends TelegramLongPollingBot implements Telegra
     @Override
     public void execute(SendMessage sendMessage) throws TelegramApiException {
         super.execute(sendMessage);
+    }
+
+    @Override
+    public void executeVideo(SendVideo sendVideo) throws TelegramApiException {
+        super.execute(sendVideo);
     }
 
     @Override

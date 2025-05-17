@@ -15,4 +15,8 @@ public interface TelegramUserRepository extends CrudRepository<TelegramUser, Lon
     @Query("UPDATE TelegramUser t SET t.lastModifiedDate = ?2 WHERE t.id = ?1")
     void updateTelegramUserLastModifiedDateById(Long id , Instant lastModifiedDate);
 
+    @Modifying
+    @Query("UPDATE TelegramUser t SET t.isSubscribed=?2 WHERE t.id=?1")
+    void updateTelegramUserIsSubscribedById(Long id , boolean subscribed);
+
 }

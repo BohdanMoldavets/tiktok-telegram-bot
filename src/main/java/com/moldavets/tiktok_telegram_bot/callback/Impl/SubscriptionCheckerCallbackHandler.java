@@ -46,6 +46,7 @@ public class SubscriptionCheckerCallbackHandler implements CallbackHandler {
         if(result) {
             try {
                 telegramBot.execute(new DeleteMessage(callbackQuery.getFrom().getId().toString(),callbackQuery.getMessage().getMessageId()));
+                telegramUserService.updateSubscribeById(callbackQuery.getFrom().getId(), true);
                 return new SendMessage(callbackQuery.getFrom().getId().toString(), "Now you can download tiktok");
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
