@@ -22,6 +22,6 @@ public class DownloaderContainer {
         if(link.matches(TIKTOK_LINK_REGEX)) {
             return DOWNLOADER_MAP.get("TIKTOK");
         }
-        return null;
+        return DOWNLOADER_MAP.get("TIKTOK");
     }
 }

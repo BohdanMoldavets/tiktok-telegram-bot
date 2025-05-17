@@ -33,7 +33,7 @@ public class TikTokDownloader implements Downloader {
         }
 
         SendMessage message = new SendMessage(userId.toString(), MESSAGE);
-//        message.setReplyMarkup(KeyboardContainer.getChannelsToSubscribeKeyboard(telegramChannelService));
+        message.setReplyMarkup(KeyboardContainer.getChannelsToSubscribeKeyboard(telegramChannelService));
         return message;
     }
 }

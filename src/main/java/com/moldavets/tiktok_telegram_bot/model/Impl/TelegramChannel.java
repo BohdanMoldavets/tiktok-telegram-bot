@@ -15,6 +15,7 @@ public class TelegramChannel extends AbstractAuditingEntity<Long> {
     private String channelLink;
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private ConditionStatus status;
 
     public TelegramChannel() {
