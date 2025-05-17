@@ -29,7 +29,7 @@ public final class KeyboardContainer {
 
         resultKeyboard.add(
             List.of(
-                    new InlineKeyboardButton("Check subscription \uD83D\uDD04", null, "SUBSCRIBED_ON_REQUIRED_CHANNELS", null, null, null, null, null, null)
+                    new InlineKeyboardButton("Check subscription \uD83D\uDD04", null, "CHECK_SUBSCRIPTION_ON_REQUIRED_CHANNELS", null, null, null, null, null, null)
             )
         );
 
