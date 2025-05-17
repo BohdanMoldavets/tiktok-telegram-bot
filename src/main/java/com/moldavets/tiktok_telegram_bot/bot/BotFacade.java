@@ -5,12 +5,14 @@ import com.moldavets.tiktok_telegram_bot.command.CommandContainer;
 import com.moldavets.tiktok_telegram_bot.downloader.DownloaderContainer;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+@Slf4j
 @Component
 public class BotFacade {
 
@@ -38,6 +40,8 @@ public class BotFacade {
             return message.startsWith(COMMAND_PREFIX) ?
                     commandContainer.retrieveCommand(message).execute(update) : downloaderContainer.processDownloader(message).execute(update);
         }
+
+        log.warn(update.toString());
         return null; //todo delete null
     }
 }
