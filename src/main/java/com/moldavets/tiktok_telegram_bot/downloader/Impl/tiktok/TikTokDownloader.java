@@ -4,6 +4,7 @@ import com.moldavets.tiktok_telegram_bot.bot.TelegramBot;
 import com.moldavets.tiktok_telegram_bot.downloader.Downloader;
 import com.moldavets.tiktok_telegram_bot.keyboard.KeyboardContainer;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
+import com.moldavets.tiktok_telegram_bot.parser.Impl.VideoParser;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -36,7 +37,7 @@ public class TikTokDownloader implements Downloader {
         TelegramUser storedUser = telegramUserService.getById(userId);
         if (storedUser != null && storedUser.isSubscribed()) {
             try {
-                SendVideo sendVideo = new SendVideo(userId.toString(), TikTokParser.parse("https://tikcdn.io/tiktokdownload/7309569645982403858"));
+                SendVideo sendVideo = new SendVideo(userId.toString(), VideoParser.parse("https://tikcdn.io/tiktokdownload/7309569645982403858"));
                 sendVideo.setCaption("Download more tiktoks here TikTok @tiktok");
                 telegramBot.executeVideo(sendVideo);
 
