@@ -10,5 +10,7 @@ public interface TelegramUserService {
 
     void save(TelegramUser telegramUser);
 
+    void updateSubscribeById(Long userId, Boolean subscribe);
+
     void updateLastModifiedDateById(Long id);
 }

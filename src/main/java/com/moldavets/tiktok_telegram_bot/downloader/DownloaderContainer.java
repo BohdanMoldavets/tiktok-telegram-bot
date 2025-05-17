@@ -1,6 +1,7 @@
 package com.moldavets.tiktok_telegram_bot.downloader;
 
-import com.moldavets.tiktok_telegram_bot.downloader.Impl.TikTokDownloader;
+import com.moldavets.tiktok_telegram_bot.bot.TelegramBot;
+import com.moldavets.tiktok_telegram_bot.downloader.Impl.tiktok.TikTokDownloader;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 
@@ -12,9 +13,9 @@ public class DownloaderContainer {
 
     private final Map<String, Downloader> DOWNLOADER_MAP;
 
-    public DownloaderContainer(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService) {
+    public DownloaderContainer(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService, TelegramBot telegramBot) {
         this.DOWNLOADER_MAP = Map.of(
-                "TIKTOK", new TikTokDownloader(telegramUserService, telegramChannelService)
+                "TIKTOK", new TikTokDownloader(telegramUserService, telegramChannelService, telegramBot)
         );
     }
 
@@ -22,6 +23,6 @@ public class DownloaderContainer {
         if(link.matches(TIKTOK_LINK_REGEX)) {
             return DOWNLOADER_MAP.get("TIKTOK");
         }
-        return null;
+        return DOWNLOADER_MAP.get("TIKTOK");
     }
 }

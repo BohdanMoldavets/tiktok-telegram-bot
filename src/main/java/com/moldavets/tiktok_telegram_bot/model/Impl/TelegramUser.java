@@ -15,6 +15,7 @@ public class TelegramUser extends AbstractAuditingEntity<Long> {
     private String username;
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private ConditionStatus status;
 
     @Column(name = "is_subscribed")
