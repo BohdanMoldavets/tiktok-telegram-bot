@@ -17,18 +17,22 @@ public final class KeyboardContainer {
 
     public static InlineKeyboardMarkup getChannelsToSubscribeKeyboard(TelegramChannelService telegramChannelService) {
 
-        List<TelegramChannel> channels = new ArrayList<>();
+        List<List<InlineKeyboardButton>> resultKeyboard = new ArrayList<>();
 
-        return InlineKeyboardMarkup.builder().keyboard(
+        for(TelegramChannel channel : telegramChannelService.getAllWhereStatusIsActive()) {
+            resultKeyboard.add(
                 List.of(
-                        List.of(
-                                new InlineKeyboardButton("Group1", "https://t.me/+qRyA29kZozhiY2U0", null, null, null, null, null, null, null)
-                        ),
-                        List.of(
-                                new InlineKeyboardButton("Group2", "https://t.me/+qRyA29kZozhiY2U0", null, null, null, null, null, null, null)
-
-                        )
+                        new InlineKeyboardButton("Subscribe to this channel ✅", channel.getChannelLink(), null, null, null, null, null, null, null)
                 )
-        ).build();
+            );
+        }
+
+        resultKeyboard.add(
+            List.of(
+                    new InlineKeyboardButton("Check subscription \uD83D\uDD04", null, "SUBSCRIBED_ON_REQUIRED_CHANNELS", null, null, null, null, null, null)
+            )
+        );
+
+        return new InlineKeyboardMarkup(resultKeyboard);
     }
 }
