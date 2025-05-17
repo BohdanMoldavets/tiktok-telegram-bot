@@ -24,7 +24,7 @@ public class BotFacade {
     public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService) {
         this.commandContainer = new CommandContainer(telegramUserService, telegramChannelService);
         this.downloaderContainer = new DownloaderContainer(telegramUserService, telegramChannelService);
-        this.callbackFacade = new CallbackFacade();
+        this.callbackFacade = new CallbackFacade(telegramUserService, telegramChannelService);
     }
 
     public BotApiMethod<?> processUpdate(Update update) {
@@ -38,6 +38,6 @@ public class BotFacade {
             return message.startsWith(COMMAND_PREFIX) ?
                     commandContainer.retrieveCommand(message).execute(update) : downloaderContainer.processDownloader(message).execute(update);
         }
-        return null;
+        return null; //todo delete null
     }
 }
