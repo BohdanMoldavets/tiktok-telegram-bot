@@ -34,7 +34,9 @@ public class TikTokTelegramBot extends TelegramLongPollingBot implements Telegra
     public void onUpdateReceived(Update update) {
         BotApiMethod<?> response = botFacade.processUpdate(update);
         try {
-            execute(response);
+            if(response != null) {
+                execute(response);
+            }
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }

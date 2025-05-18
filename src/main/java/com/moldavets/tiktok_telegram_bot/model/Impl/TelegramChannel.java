@@ -1,7 +1,7 @@
 package com.moldavets.tiktok_telegram_bot.model.Impl;
 
 import com.moldavets.tiktok_telegram_bot.model.AbstractAuditingEntity;
-import com.moldavets.tiktok_telegram_bot.model.ConditionStatus;
+import com.moldavets.tiktok_telegram_bot.model.TelegramGroupStatus;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,12 +16,12 @@ public class TelegramChannel extends AbstractAuditingEntity<Long> {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private ConditionStatus status;
+    private TelegramGroupStatus status;
 
     public TelegramChannel() {
     }
 
-    public TelegramChannel(Long id, String channelLink, ConditionStatus status) {
+    public TelegramChannel(Long id, String channelLink, TelegramGroupStatus status) {
         this.id = id;
         this.channelLink = channelLink;
         this.status = status;
@@ -44,11 +44,11 @@ public class TelegramChannel extends AbstractAuditingEntity<Long> {
         this.channelLink = channelLink;
     }
 
-    public ConditionStatus getStatus() {
+    public TelegramGroupStatus getStatus() {
         return status;
     }
 
-    public void setStatus(ConditionStatus status) {
+    public void setStatus(TelegramGroupStatus status) {
         this.status = status;
     }
 }

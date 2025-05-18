@@ -1,6 +1,6 @@
 package com.moldavets.tiktok_telegram_bot.service.Impl;
 
-import com.moldavets.tiktok_telegram_bot.model.ConditionStatus;
+import com.moldavets.tiktok_telegram_bot.model.TelegramGroupStatus;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramChannel;
 import com.moldavets.tiktok_telegram_bot.repository.TelegramChannelRepository;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
@@ -26,6 +26,6 @@ public class TelegramChannelServiceImpl implements TelegramChannelService {
 
     @Override
     public List<TelegramChannel> getAllWhereStatusIsActive() {
-        return telegramChannelRepository.findAllByStatus(ConditionStatus.ACTIVE);
+        return telegramChannelRepository.findAllByStatus(TelegramGroupStatus.ACTIVE);
     }
 }

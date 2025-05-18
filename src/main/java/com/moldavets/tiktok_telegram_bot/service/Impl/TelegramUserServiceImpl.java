@@ -1,7 +1,8 @@
 package com.moldavets.tiktok_telegram_bot.service.Impl;
 
-import com.moldavets.tiktok_telegram_bot.model.ConditionStatus;
+import com.moldavets.tiktok_telegram_bot.model.TelegramGroupStatus;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
+import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.repository.TelegramUserRepository;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class TelegramUserServiceImpl implements TelegramUserService {
                     new TelegramUser(
                             userId,
                             username,
-                            ConditionStatus.ACTIVE,
+                            TelegramUserStatus.MEMBER.getStatusName(),
                             false
                     )
             );
@@ -48,6 +49,12 @@ public class TelegramUserServiceImpl implements TelegramUserService {
     @Transactional
     public void save(TelegramUser telegramUser) {
         telegramUserRepository.save(telegramUser);
+    }
+
+    @Override
+    @Transactional
+    public void updateStatusById(Long id, TelegramUserStatus telegramUserStatus) {
+        telegramUserRepository.updateTelegramUserStatusById(id, telegramUserStatus.getStatusName());
     }
 
     @Override

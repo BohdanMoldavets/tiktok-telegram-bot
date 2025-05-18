@@ -20,7 +20,7 @@ public class StartCommand implements Command {
     public BotApiMethod<?> execute(Update update) {
         Long userId = update.getMessage().getFrom().getId();
         String username = update.getMessage().getFrom().getUserName();
-        telegramUserService.checkTelegramUserRegistration(userId, username);
+        telegramUserService.checkTelegramUserRegistration(userId, username); //todo delete
         return new SendMessage(userId.toString(), MESSAGE);
     }
 }

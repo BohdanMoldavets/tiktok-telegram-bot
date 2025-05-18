@@ -33,7 +33,7 @@ public class TikTokDownloader implements Downloader {
     public BotApiMethod<?> execute(Update update) {
         Long userId = update.getMessage().getFrom().getId();
         String username = update.getMessage().getFrom().getUserName();
-        telegramUserService.checkTelegramUserRegistration(userId, username);
+        telegramUserService.checkTelegramUserRegistration(userId, username); //todo delete
 
         TelegramUser storedUser = telegramUserService.getById(userId);
         if (storedUser != null && storedUser.isSubscribed()) {

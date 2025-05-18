@@ -1,7 +1,8 @@
 package com.moldavets.tiktok_telegram_bot.model.Impl;
 
 import com.moldavets.tiktok_telegram_bot.model.AbstractAuditingEntity;
-import com.moldavets.tiktok_telegram_bot.model.ConditionStatus;
+import com.moldavets.tiktok_telegram_bot.model.TelegramGroupStatus;
+import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,8 +16,7 @@ public class TelegramUser extends AbstractAuditingEntity<Long> {
     private String username;
 
     @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private ConditionStatus status;
+    private String status;
 
     @Column(name = "is_subscribed")
     private Boolean isSubscribed;
@@ -24,7 +24,7 @@ public class TelegramUser extends AbstractAuditingEntity<Long> {
     public TelegramUser() {
     }
 
-    public TelegramUser(Long id, String username, ConditionStatus status, Boolean isSubscribed) {
+    public TelegramUser(Long id, String username, String status, Boolean isSubscribed) {
         this.id = id;
         this.username = username;
         this.status = status;
@@ -48,11 +48,11 @@ public class TelegramUser extends AbstractAuditingEntity<Long> {
         this.username = username;
     }
 
-    public ConditionStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(ConditionStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
