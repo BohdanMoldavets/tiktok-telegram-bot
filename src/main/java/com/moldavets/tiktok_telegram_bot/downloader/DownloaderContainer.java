@@ -1,7 +1,7 @@
 package com.moldavets.tiktok_telegram_bot.downloader;
 
 import com.moldavets.tiktok_telegram_bot.bot.TelegramBot;
-import com.moldavets.tiktok_telegram_bot.downloader.Impl.tiktok.TikTokDownloader;
+import com.moldavets.tiktok_telegram_bot.downloader.Impl.TikTokDownloader;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 
@@ -23,6 +23,6 @@ public class DownloaderContainer {
         if(link.matches(TIKTOK_LINK_REGEX)) {
             return DOWNLOADER_MAP.get("TIKTOK");
         }
-        return DOWNLOADER_MAP.get("TIKTOK");
+        return DOWNLOADER_MAP.get("TIKTOK"); //todo change tiktok regex
     }
 }

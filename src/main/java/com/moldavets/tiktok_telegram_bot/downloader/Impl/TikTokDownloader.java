@@ -1,4 +1,4 @@
-package com.moldavets.tiktok_telegram_bot.downloader.Impl.tiktok;
+package com.moldavets.tiktok_telegram_bot.downloader.Impl;
 
 import com.moldavets.tiktok_telegram_bot.bot.TelegramBot;
 import com.moldavets.tiktok_telegram_bot.downloader.Downloader;

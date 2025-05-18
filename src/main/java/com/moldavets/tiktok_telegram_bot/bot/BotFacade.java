@@ -8,9 +8,9 @@ import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.updates.Close;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -27,8 +27,9 @@ public class BotFacade {
     private final TelegramUserService telegramUserService;
 
     @Autowired
-    public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService, TelegramBot telegramBot) {
-        this.commandContainer = new CommandContainer(telegramUserService, telegramChannelService);
+    public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService,
+                     TelegramBot telegramBot,@Value("${telegram.bot.admin.id}") Long adminId) {
+        this.commandContainer = new CommandContainer(telegramUserService, telegramChannelService, adminId);
         this.downloaderContainer = new DownloaderContainer(telegramUserService, telegramChannelService, telegramBot);
         this.callbackFacade = new CallbackFacade(telegramUserService, telegramChannelService, telegramBot);
         this.telegramUserService = telegramUserService;
@@ -53,6 +54,7 @@ public class BotFacade {
             return message.startsWith(COMMAND_PREFIX) ?
                     commandContainer.retrieveCommand(message).execute(update) : downloaderContainer.processDownloader(message).execute(update);
         }
+
         return null;
     }
 }
