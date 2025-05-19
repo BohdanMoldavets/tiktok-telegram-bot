@@ -40,6 +40,17 @@ public class TelegramChannelServiceImpl implements TelegramChannelService {
 
     @Override
     @Transactional
+    public void saveOrUpdate(TelegramChannel telegramChannel) {
+        TelegramChannel storedChannel = telegramChannelRepository.findById(telegramChannel.getId()).orElse(null);
+        if(storedChannel != null) {
+            telegramChannelRepository.updateTelegramChannelById(telegramChannel.getId(), telegramChannel.getChannelLink(), TelegramChannelStatus.ACTIVE);
+        } else {
+            telegramChannelRepository.save(telegramChannel);
+        }
+    }
+
+    @Override
+    @Transactional
     public void updateStatusById(Long id, TelegramChannelStatus status) {
         telegramChannelRepository.updateTelegramChannelStatusById(id, status);
     }

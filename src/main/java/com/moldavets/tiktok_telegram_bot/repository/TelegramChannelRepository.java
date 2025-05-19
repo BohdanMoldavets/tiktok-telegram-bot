@@ -16,4 +16,8 @@ public interface TelegramChannelRepository extends CrudRepository<TelegramChanne
     @Modifying
     @Query("UPDATE TelegramChannel t SET t.status=?2 WHERE t.id=?1")
     void updateTelegramChannelStatusById(Long id, TelegramChannelStatus status);
+
+    @Modifying
+    @Query("UPDATE TelegramChannel t SET t.channelLink=?2, t.status=?3 WHERE t.id=?1")
+    void updateTelegramChannelById(Long id, String link ,TelegramChannelStatus status);
 }

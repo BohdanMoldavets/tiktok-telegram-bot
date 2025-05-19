@@ -10,6 +10,7 @@ public interface TelegramChannelService {
     TelegramChannel getById(Long id);
     List<TelegramChannel> getAllWhereStatusIsActive();
     void save(TelegramChannel telegramChannel);
+    void saveOrUpdate(TelegramChannel telegramChannel);
     void updateStatusById(Long id, TelegramChannelStatus status);
 
 }
