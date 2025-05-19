@@ -21,6 +21,7 @@ public class CommandContainer {
     }
 
     public Command retrieveCommand(String command) {
-        return COMMAND_MAP.getOrDefault(command, new UnknownCommand());
+        String test = command.split(" ")[0];
+        return COMMAND_MAP.getOrDefault(command.split(" ")[0], new UnknownCommand());
     }
 }

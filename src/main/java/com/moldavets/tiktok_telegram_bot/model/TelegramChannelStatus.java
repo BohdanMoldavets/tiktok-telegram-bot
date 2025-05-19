@@ -1,5 +1,5 @@
 package com.moldavets.tiktok_telegram_bot.model;
 
-public enum TelegramGroupStatus {
+public enum TelegramChannelStatus {
     ACTIVE, INACTIVE
 }

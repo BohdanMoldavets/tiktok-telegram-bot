@@ -1,8 +1,6 @@
 package com.moldavets.tiktok_telegram_bot.model.Impl;
 
 import com.moldavets.tiktok_telegram_bot.model.AbstractAuditingEntity;
-import com.moldavets.tiktok_telegram_bot.model.TelegramGroupStatus;
-import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import jakarta.persistence.*;
 
 @Entity

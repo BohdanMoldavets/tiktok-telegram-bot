@@ -1,6 +1,5 @@
 package com.moldavets.tiktok_telegram_bot.service.Impl;
 
-import com.moldavets.tiktok_telegram_bot.model.TelegramGroupStatus;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
 import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.repository.TelegramUserRepository;
