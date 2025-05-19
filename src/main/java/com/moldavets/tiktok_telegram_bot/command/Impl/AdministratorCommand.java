@@ -44,6 +44,7 @@ public class AdministratorCommand implements Command {
         switch (command[1]) {
             case "add":
                 telegramChannelService.saveOrUpdate(new TelegramChannel(Long.parseLong(command[2]), command[3], TelegramChannelStatus.ACTIVE));
+                telegramUserService.updateSubscriptionForAllUsers(false);
                 break;
             case "delete":
                 telegramChannelService.updateStatusById(Long.parseLong(command[2]), TelegramChannelStatus.INACTIVE);

@@ -13,6 +13,8 @@ public interface TelegramUserService {
 
     void updateStatusById(Long id, TelegramUserStatus telegramUserStatus);
 
+    void updateSubscriptionForAllUsers(boolean isSubscribed);
+
     void updateSubscribeById(Long userId, Boolean subscribe);
 
     void updateLastModifiedDateById(Long id);

@@ -58,6 +58,12 @@ public class TelegramUserServiceImpl implements TelegramUserService {
 
     @Override
     @Transactional
+    public void updateSubscriptionForAllUsers(boolean isSubscribed) {
+        telegramUserRepository.updateAllTelegramUsersSubscription(isSubscribed);
+    }
+
+    @Override
+    @Transactional
     public void updateSubscribeById(Long userId, Boolean isSubscribed) {
         telegramUserRepository.updateTelegramUserIsSubscribedById(userId, isSubscribed);
     }
