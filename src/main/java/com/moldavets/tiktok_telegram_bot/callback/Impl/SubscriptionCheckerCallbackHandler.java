@@ -5,6 +5,7 @@ import com.moldavets.tiktok_telegram_bot.callback.CallbackHandler;
 import com.moldavets.tiktok_telegram_bot.model.TelegramChannelStatus;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
+import com.moldavets.tiktok_telegram_bot.utils.MessageText;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -65,12 +66,12 @@ public class SubscriptionCheckerCallbackHandler implements CallbackHandler {
             if(result) {
                 telegramBot.execute(new DeleteMessage(userId.toString(), messageId));
                 telegramUserService.updateSubscribeById(userId, true);
-                return new SendMessage(userId.toString(), "Now you can download tiktok");
+                return new SendMessage(userId.toString(), MessageText.CALLBACK_SUCCESSFUL_SUBSCRIPTION.getMessageText());
             }
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
-        return new SendMessage(userId.toString(), "Subscription Failed");
+        return new SendMessage(userId.toString(), MessageText.CALLBACK_FAILED_SUBSCRIPTION.getMessageText());
     }
 
 }
