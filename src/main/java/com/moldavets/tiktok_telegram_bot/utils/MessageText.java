@@ -1,0 +1,23 @@
+package com.moldavets.tiktok_telegram_bot.utils;
+
+public enum MessageText {
+    COMMAND_START("Hello!!! Please send your tiktok link to download"),
+    COMMAND_UNKNOWN("Command not found!"),
+    CALLBACK_SUCCESSFUL_SUBSCRIPTION("Now you can download tiktok"),
+    CALLBACK_FAILED_SUBSCRIPTION("Subscription Failed"),
+    DOWNLOADER_ASSIGN_CAPTION("Download more tiktoks here TikTok @tiktok"),
+    DOWNLOADER_NEXT_VIDEO_REQUEST("Send another link for download"),
+    DOWNLOADER_SUBSCRIPTION_REQUEST("Please subscribe on this groups for Download TikTok"),
+    KEYBOARD_BUTTON_SUBSCRIPTION_REQUEST("Subscribe to this channel ✅"),
+    KEYBOARD_BUTTON_CHECK_SUBSCRIPTION("Check subscription \uD83D\uDD04");
+
+    private final String messageText;
+
+    MessageText(String messageText) {
+        this.messageText = messageText;
+    }
+
+    public String getMessageText() {
+        return messageText;
+    }
+}
