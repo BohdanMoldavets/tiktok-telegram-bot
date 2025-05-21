@@ -20,6 +20,8 @@ public class BotFacade {
 
     private final String COMMAND_PREFIX = "/";
 
+    private final Long ADMIN_ID;
+
     private final CommandContainer commandContainer;
     private final DownloaderContainer downloaderContainer;
     private final CallbackFacade callbackFacade;
@@ -33,6 +35,7 @@ public class BotFacade {
         this.downloaderContainer = new DownloaderContainer(telegramUserService, telegramChannelService, telegramBot);
         this.callbackFacade = new CallbackFacade(telegramUserService, telegramChannelService, telegramBot);
         this.telegramUserService = telegramUserService;
+        this.ADMIN_ID = adminId;
     }
 
     public BotApiMethod<?> processUpdate(Update update) {
@@ -47,6 +50,10 @@ public class BotFacade {
         if(update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             return callbackFacade.processCallback(callbackQuery.getData()).handle(callbackQuery);
+        }
+
+        if(update.hasMessage() && update.getMessage().getForwardFrom() != null && update.getMessage().getFrom().getId().equals(ADMIN_ID)) {
+
         }
 
         if(update.hasMessage() && update.getMessage().hasText()) {

@@ -13,7 +13,8 @@ public class CommandContainer {
 
     private final Map<String, Command> COMMAND_MAP;
 
-    public CommandContainer(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService, Long adminId) {
+    public CommandContainer(TelegramUserService telegramUserService,
+                            TelegramChannelService telegramChannelService, Long adminId) {
         this.COMMAND_MAP = Map.of(
                 "/start", new StartCommand(telegramUserService),
                 "/administrator", new AdministratorCommand(telegramUserService, telegramChannelService, adminId)
