@@ -9,6 +9,8 @@ public enum MessageText {
     DOWNLOADER_NEXT_VIDEO_REQUEST("Send another link for download"),
     DOWNLOADER_FAIL_WHILE_DOWNLOADING("Looks like you enter wrong link!"),
     DOWNLOADER_SUBSCRIPTION_REQUEST("Please subscribe on this groups for Download TikTok"),
+    DOWNLOADER_UNKNOWN("Downloader not found!"),
+    DOWNLOADER_SOMETHING_WENT_WRONG("Something went wrong!"), //when request video is too long
     KEYBOARD_BUTTON_SUBSCRIPTION_REQUEST("Subscribe to this channel ✅"),
     KEYBOARD_BUTTON_CHECK_SUBSCRIPTION("Check subscription \uD83D\uDD04"),
     ADS_AMOUNT_OF_USERS_WHO_RECEIVED_AD("Amount of users who received advert"),

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -23,7 +22,6 @@ public class BotFacade {
 
     private final String COMMAND_PREFIX = "/";
 
-    private final Long ADMIN_ID;
     private final Long ADS_CHANNEL_ID;
 
     private final CommandContainer commandContainer;
@@ -42,7 +40,6 @@ public class BotFacade {
         this.callbackFacade = new CallbackFacade(telegramUserService, telegramChannelService, telegramBot);
         this.adsSenderService = new AdsSenderServiceImpl(telegramBot, telegramUserService, adminId);
         this.telegramUserService = telegramUserService;
-        this.ADMIN_ID = adminId;
         this.ADS_CHANNEL_ID = adsChatId;
     }
 
@@ -59,12 +56,6 @@ public class BotFacade {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             return callbackFacade.processCallback(callbackQuery.getData()).handle(callbackQuery);
         }
-
-//        if(update.hasMessage() //todo delete
-//                && (update.getMessage().getForwardFrom() != null || update.getMessage().getForwardFromChat() != null)
-//                && update.getMessage().getFrom().getId().equals(ADMIN_ID)) {
-//            return new SendMessage(ADMIN_ID.toString(), adsSenderService.sendForwardMessageToAllUsers(update).toString());
-//        }
 
         if(update.hasChannelPost() && update.getChannelPost().getChatId().equals(ADS_CHANNEL_ID)) {
             return adsSenderService.sendForwardMessageToAllUsers(update);
