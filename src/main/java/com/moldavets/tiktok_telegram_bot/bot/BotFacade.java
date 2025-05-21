@@ -3,6 +3,7 @@ package com.moldavets.tiktok_telegram_bot.bot;
 import com.moldavets.tiktok_telegram_bot.callback.CallbackFacade;
 import com.moldavets.tiktok_telegram_bot.command.CommandContainer;
 import com.moldavets.tiktok_telegram_bot.downloader.DownloaderContainer;
+import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramLogger;
 import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.service.AdsSenderService;
 import com.moldavets.tiktok_telegram_bot.service.Impl.AdsSenderServiceImpl;
@@ -16,7 +17,6 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-@Slf4j
 @Component
 public class BotFacade {
 
@@ -34,13 +34,15 @@ public class BotFacade {
     @Autowired
     public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService,
                      TelegramBot telegramBot, @Value("${telegram.bot.admin.id}") Long adminId,
-                     @Value("${telegram.bot.ads.chat.id}") Long adsChatId) {
+                     @Value("${telegram.bot.ads.chat.id}") Long adsChatId,
+                     @Value("${telegram.bot.log.chat.id}") Long logChatId) {
         this.commandContainer = new CommandContainer(telegramUserService, telegramChannelService, adminId);
         this.downloaderContainer = new DownloaderContainer(telegramUserService, telegramChannelService, telegramBot);
         this.callbackFacade = new CallbackFacade(telegramUserService, telegramChannelService, telegramBot);
         this.adsSenderService = new AdsSenderServiceImpl(telegramBot, telegramUserService, adminId);
         this.telegramUserService = telegramUserService;
         this.ADS_CHANNEL_ID = adsChatId;
+        TelegramLogger.init(telegramBot, logChatId);
     }
 
     public BotApiMethod<?> processUpdate(Update update) {
