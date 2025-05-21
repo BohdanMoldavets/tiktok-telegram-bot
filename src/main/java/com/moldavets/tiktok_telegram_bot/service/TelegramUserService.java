@@ -3,9 +3,13 @@ package com.moldavets.tiktok_telegram_bot.service;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
 import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 
+import java.util.Set;
+
 public interface TelegramUserService {
 
     TelegramUser getById(Long id);
+
+    Set<TelegramUser> getAllActiveTelegramUsers();
 
     void checkTelegramUserRegistration(Long userId, String username);
 
