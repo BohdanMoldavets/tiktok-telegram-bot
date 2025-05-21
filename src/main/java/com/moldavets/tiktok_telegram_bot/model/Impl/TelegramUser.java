@@ -4,7 +4,7 @@ import com.moldavets.tiktok_telegram_bot.model.AbstractAuditingEntity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "telegram_users")
+@Table(name = "telegram_user")
 public class TelegramUser extends AbstractAuditingEntity<Long> {
     @Id
     @Column(name = "id")

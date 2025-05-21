@@ -17,10 +17,10 @@ services:
 
   postgres:
     image: postgres:15
-    container_name: urlShortener-postgres-container
+    container_name: tiktok-telegram-bot-database
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=url-shortener-database
+      - POSTGRES_DB=tiktok-telegram-bot-database
     ports:
       - "5431:5432"
