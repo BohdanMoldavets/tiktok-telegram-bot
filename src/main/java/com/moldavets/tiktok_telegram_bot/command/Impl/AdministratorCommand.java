@@ -5,6 +5,7 @@ import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramChannel;
 import com.moldavets.tiktok_telegram_bot.model.TelegramChannelStatus;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
+import com.moldavets.tiktok_telegram_bot.utils.MessageText;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -28,29 +29,59 @@ public class AdministratorCommand implements Command {
     public BotApiMethod<?> execute(Update update) {
         Long userId = update.getMessage().getFrom().getId();
         String[] splitMessage = update.getMessage().getText().trim().split(" ");
+        SendMessage sendMessage = null;
+
         if (userId.equals(ADMIN_ID) && splitMessage.length > 1) {
 
-            if(splitMessage[1].equals("list")) {
-                return new SendMessage(ADMIN_ID.toString(), formatChannelsMessage(telegramChannelService.getAllWhereStatusIsActive()));
-            } else if(splitMessage[1].equals("add") || splitMessage[1].equals("delete")) {
-                return processCommand(splitMessage);
+            if(splitMessage[1].equals("add") || splitMessage[1].equals("delete")
+                    || splitMessage[1].equals("list") || splitMessage[1].equals("groups")) {
+                sendMessage = processCommand(splitMessage);
             }
+
         }
-        return new UnknownCommand().execute(update);
+        return sendMessage != null ? sendMessage : new UnknownCommand().execute(update);
     }
 
 
     private SendMessage processCommand(String[] command) {
         switch (command[1]) {
             case "add":
-                telegramChannelService.saveOrUpdate(new TelegramChannel(Long.parseLong(command[2]), command[3], TelegramChannelStatus.ACTIVE));
+                Long channelIdToAdd = Long.parseLong(command[2]);
+
+                telegramChannelService.saveOrUpdate(
+                        new TelegramChannel(channelIdToAdd, command[3],
+                        TelegramChannelStatus.ACTIVE)
+                );
+
                 telegramUserService.updateSubscriptionForAllUsers(false);
-                break;
+
+                return new SendMessage(
+                        ADMIN_ID.toString(),
+                        MessageText.COMMAND_ADMINISTRATOR_CHANNEL_ADDED.getMessageText() + " - [" + channelIdToAdd + "]"
+                );
+
             case "delete":
-                telegramChannelService.updateStatusById(Long.parseLong(command[2]), TelegramChannelStatus.INACTIVE);
-                break;
+                Long channelIdToDelete = Long.parseLong(command[2]);
+                telegramChannelService.updateStatusById(channelIdToDelete, TelegramChannelStatus.INACTIVE);
+
+                return new SendMessage(
+                        ADMIN_ID.toString(),
+                        MessageText.COMMAND_ADMINISTRATOR_CHANNEL_DELETED.getMessageText() + " - [" + channelIdToDelete + "]"
+                );
+
+            case "groups":
+                return new SendMessage(
+                        ADMIN_ID.toString(),
+                        formatChannelsMessage(telegramChannelService.getAllWhereStatusIsActive())
+                );
+
+                case "list":
+                return new SendMessage(
+                    ADMIN_ID.toString(),
+                    MessageText.COMMAND_ADMINISTRATOR_USERS_COUNT.getMessageText() + " - " + telegramUserService.getAllActiveTelegramUsers().size()
+            );
         }
-        return new SendMessage(ADMIN_ID.toString(), formatChannelsMessage(telegramChannelService.getAllWhereStatusIsActive()));
+        return null;
     }
 
     private String formatChannelsMessage(List<TelegramChannel> channels) {
