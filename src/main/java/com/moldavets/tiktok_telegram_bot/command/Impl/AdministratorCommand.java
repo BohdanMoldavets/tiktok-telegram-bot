@@ -34,7 +34,7 @@ public class AdministratorCommand implements Command {
         if (userId.equals(ADMIN_ID) && splitMessage.length > 1) {
 
             if(splitMessage[1].equals("add") || splitMessage[1].equals("delete")
-                    || splitMessage[1].equals("list") || splitMessage[1].equals("groups")) {
+                    || splitMessage[1].equals("users") || splitMessage[1].equals("groups")) {
                 sendMessage = processCommand(splitMessage);
             }
 
@@ -75,11 +75,21 @@ public class AdministratorCommand implements Command {
                         formatChannelsMessage(telegramChannelService.getAllWhereStatusIsActive())
                 );
 
-                case "list":
+            case "users":
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder
+                        .append(MessageText.COMMAND_ADMINISTRATOR_ACTIVE_USERS_COUNT.getMessageText())
+                        .append(" - [")
+                        .append(telegramUserService.getAllActiveTelegramUsers().size())
+                        .append("]\n\n")
+                        .append(MessageText.COMMAND_ADMINISTRATOR_ALL_USERS_COUNT.getMessageText())
+                        .append(" - [")
+                        .append(telegramUserService.getAll().size())
+                        .append("]");
                 return new SendMessage(
-                    ADMIN_ID.toString(),
-                    MessageText.COMMAND_ADMINISTRATOR_USERS_COUNT.getMessageText() + " - " + telegramUserService.getAllActiveTelegramUsers().size()
-            );
+                        ADMIN_ID.toString(),
+                        stringBuilder.toString()
+                );
         }
         return null;
     }

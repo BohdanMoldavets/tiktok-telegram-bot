@@ -9,6 +9,8 @@ public interface TelegramUserService {
 
     TelegramUser getById(Long id);
 
+    Set<TelegramUser> getAll();
+
     Set<TelegramUser> getAllActiveTelegramUsers();
 
     void checkTelegramUserRegistration(Long userId, String username);

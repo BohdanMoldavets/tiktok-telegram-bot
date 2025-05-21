@@ -28,6 +28,11 @@ public class TelegramUserServiceImpl implements TelegramUserService {
     }
 
     @Override
+    public Set<TelegramUser> getAll() {
+        return telegramUserRepository.findAll();
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Set<TelegramUser> getAllActiveTelegramUsers() {
         return telegramUserRepository.findAllByStatusIsNotIn(Set.of(
@@ -51,7 +56,7 @@ public class TelegramUserServiceImpl implements TelegramUserService {
                     )
             );
         } else {
-            telegramUserRepository.updateTelegramUserLastModifiedDateById(userId, Instant.now());
+            telegramUserRepository.updateTelegramUserStatusById(userId, TelegramUserStatus.MEMBER.getStatusName());
         }
     }
 

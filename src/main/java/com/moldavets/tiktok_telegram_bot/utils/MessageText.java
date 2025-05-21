@@ -2,7 +2,8 @@ package com.moldavets.tiktok_telegram_bot.utils;
 
 public enum MessageText {
     COMMAND_START("Hello!!! Please send your tiktok link to download"),
-    COMMAND_ADMINISTRATOR_USERS_COUNT("Count of bot users"),
+    COMMAND_ADMINISTRATOR_ACTIVE_USERS_COUNT("Count of active bot users"),
+    COMMAND_ADMINISTRATOR_ALL_USERS_COUNT("Count of all bot users"),
     COMMAND_ADMINISTRATOR_CHANNEL_ADDED("Added new channel with id"),
     COMMAND_ADMINISTRATOR_CHANNEL_DELETED("Deleted channel with id"),
     COMMAND_UNKNOWN("Command not found!"),

@@ -12,6 +12,8 @@ import java.util.Set;
 @Repository
 public interface TelegramUserRepository extends CrudRepository<TelegramUser, Long> {
 
+    Set<TelegramUser> findAll();
+
     Set<TelegramUser> findAllByStatusIsNotIn(Set<String> statuses);
 
     @Modifying
