@@ -10,7 +10,9 @@ public enum MessageText {
     DOWNLOADER_FAIL_WHILE_DOWNLOADING("Looks like you enter wrong link!"),
     DOWNLOADER_SUBSCRIPTION_REQUEST("Please subscribe on this groups for Download TikTok"),
     KEYBOARD_BUTTON_SUBSCRIPTION_REQUEST("Subscribe to this channel ✅"),
-    KEYBOARD_BUTTON_CHECK_SUBSCRIPTION("Check subscription \uD83D\uDD04");
+    KEYBOARD_BUTTON_CHECK_SUBSCRIPTION("Check subscription \uD83D\uDD04"),
+    ADS_AMOUNT_OF_USERS_WHO_RECEIVED_AD("Amount of users who received advert"),
+    EXCEPTION_OCCURRED("Something went wrong, try again later, or contact to developer!");
 
     private final String messageText;
 

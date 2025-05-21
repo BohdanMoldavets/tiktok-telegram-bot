@@ -40,7 +40,7 @@ public class BotFacade {
         this.commandContainer = new CommandContainer(telegramUserService, telegramChannelService, adminId);
         this.downloaderContainer = new DownloaderContainer(telegramUserService, telegramChannelService, telegramBot);
         this.callbackFacade = new CallbackFacade(telegramUserService, telegramChannelService, telegramBot);
-        this.adsSenderService = new AdsSenderServiceImpl(telegramBot, telegramUserService);
+        this.adsSenderService = new AdsSenderServiceImpl(telegramBot, telegramUserService, adminId);
         this.telegramUserService = telegramUserService;
         this.ADMIN_ID = adminId;
         this.ADS_CHANNEL_ID = adsChatId;
@@ -67,7 +67,7 @@ public class BotFacade {
 //        }
 
         if(update.hasChannelPost() && update.getChannelPost().getChatId().equals(ADS_CHANNEL_ID)) {
-            return new SendMessage(ADMIN_ID.toString(), adsSenderService.sendForwardMessageToAllUsers(update).toString());
+            return adsSenderService.sendForwardMessageToAllUsers(update);
         }
 
         if(update.hasMessage() && update.getMessage().hasText()) {

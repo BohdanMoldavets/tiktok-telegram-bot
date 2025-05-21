@@ -4,8 +4,7 @@ import com.moldavets.tiktok_telegram_bot.bot.TelegramBot;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
 import com.moldavets.tiktok_telegram_bot.service.AdsSenderService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
-import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
+import com.moldavets.tiktok_telegram_bot.utils.MessageText;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
@@ -18,37 +17,42 @@ import java.util.Set;
 
 public class AdsSenderServiceImpl implements AdsSenderService {
 
+    private final Long ADMIN_ID;
+
     private final TelegramBot telegramBot;
     private final TelegramUserService telegramUserService;
 
     public AdsSenderServiceImpl(TelegramBot telegramBot,
-                                TelegramUserService telegramUserService) {
+                                TelegramUserService telegramUserService, Long adminId) {
         this.telegramBot = telegramBot;
         this.telegramUserService = telegramUserService;
+        this.ADMIN_ID = adminId;
     }
 
     @Override
-    public Integer sendForwardMessageToAllUsers(Update update) {
+    public SendMessage sendForwardMessageToAllUsers(Update update) {
         Message message = update.getChannelPost();
-
         Set<TelegramUser> allActiveUsersSet = telegramUserService.getAllActiveTelegramUsers();
 
         try {
             if(message.hasVideo()) {
-                SendVideo sendVideo = handleVideoAd(allActiveUsersSet, update);
+                handleVideoAd(allActiveUsersSet, update);
             } else if(message.hasPhoto()) {
-                SendPhoto sendPhoto = handlePhotoAd(allActiveUsersSet, update);
+                handlePhotoAd(allActiveUsersSet, update);
             } else if(message.hasText()) {
-                SendMessage sendMessage = handleTextAd(allActiveUsersSet, update);
+                handleTextAd(allActiveUsersSet, update);
             }
         } catch (TelegramApiException e) {
             throw new RuntimeException(e); //todo delete
         }
 
-        return allActiveUsersSet.size();
+        return new SendMessage(
+                ADMIN_ID.toString(),
+                MessageText.ADS_AMOUNT_OF_USERS_WHO_RECEIVED_AD.getMessageText() + " - " + allActiveUsersSet.size()
+        );
     }
 
-    private SendMessage handleTextAd(Set<TelegramUser> telegramUsers, Update update) throws TelegramApiException {
+    private void handleTextAd(Set<TelegramUser> telegramUsers, Update update) throws TelegramApiException {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText(update.getChannelPost().getText());
         sendMessage.setReplyMarkup(update.getChannelPost().getReplyMarkup());
@@ -56,22 +60,27 @@ public class AdsSenderServiceImpl implements AdsSenderService {
             sendMessage.setChatId(telegramUser.getId());
             telegramBot.execute(sendMessage);
         }
-        return null;
     }
 
-    private SendPhoto handlePhotoAd(Set<TelegramUser> telegramUsers, Update update) throws TelegramApiException {
+    private void handlePhotoAd(Set<TelegramUser> telegramUsers, Update update) throws TelegramApiException {
         SendPhoto sendPhoto = new SendPhoto();
-        sendPhoto.setPhoto(new InputFile(update.getMessage().getPhoto().getLast().getFileId()));
-        sendPhoto.setCaption(update.getMessage().getCaption());
-        sendPhoto.setReplyMarkup(update.getMessage().getReplyMarkup());
-        return sendPhoto;
+        sendPhoto.setPhoto(new InputFile(update.getChannelPost().getPhoto().getLast().getFileId()));
+        sendPhoto.setCaption(update.getChannelPost().getCaption());
+        sendPhoto.setReplyMarkup(update.getChannelPost().getReplyMarkup());
+        for (TelegramUser telegramUser : telegramUsers) {
+            sendPhoto.setChatId(telegramUser.getId());
+            telegramBot.executePhoto(sendPhoto);
+        }
     }
 
-    private SendVideo handleVideoAd(Set<TelegramUser> telegramUsers, Update update) throws TelegramApiException {
+    private void handleVideoAd(Set<TelegramUser> telegramUsers, Update update) throws TelegramApiException {
         SendVideo sendVideo = new SendVideo();
-        sendVideo.setVideo(new InputFile(update.getMessage().getVideo().getFileId()));
-        sendVideo.setCaption(update.getMessage().getCaption());
-        sendVideo.setReplyMarkup(update.getMessage().getReplyMarkup());
-        return sendVideo;
+        sendVideo.setVideo(new InputFile(update.getChannelPost().getVideo().getFileId()));
+        sendVideo.setCaption(update.getChannelPost().getCaption());
+        sendVideo.setReplyMarkup(update.getChannelPost().getReplyMarkup());
+        for (TelegramUser telegramUser : telegramUsers) {
+            sendVideo.setChatId(telegramUser.getId());
+            telegramBot.executeVideo(sendVideo);
+        }
     }
 }
