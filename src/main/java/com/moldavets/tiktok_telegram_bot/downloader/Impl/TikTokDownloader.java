@@ -16,6 +16,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.IOException;
+
 public class TikTokDownloader implements Downloader {
 
     private TelegramBot telegramBot;
@@ -33,7 +35,9 @@ public class TikTokDownloader implements Downloader {
     public BotApiMethod<?> execute(Update update) {
         Long userId = update.getMessage().getFrom().getId();
 
+        telegramUserService.checkTelegramUserRegistration(userId, update.getMessage().getFrom().getUserName());
         TelegramUser storedUser = telegramUserService.getById(userId);
+
         if (storedUser != null && storedUser.isSubscribed()) {
             try {
                 SendVideo sendVideo = new SendVideo(userId.toString(), VideoParser.parse(TikTokParser.parse(update.getMessage().getText())));
@@ -41,7 +45,9 @@ public class TikTokDownloader implements Downloader {
                 telegramBot.executeVideo(sendVideo);
                 return new SendMessage(userId.toString(), MessageText.DOWNLOADER_NEXT_VIDEO_REQUEST.getMessageText());
             } catch (TelegramApiException e) {
-                throw new RuntimeException(e);
+                return new SendMessage(userId.toString(), MessageText.DOWNLOADER_SOMETHING_WENT_WRONG.getMessageText());
+            } catch (IOException ioe) {
+                return new SendMessage(userId.toString(), MessageText.DOWNLOADER_FAIL_WHILE_DOWNLOADING.getMessageText());
             }
         }
 

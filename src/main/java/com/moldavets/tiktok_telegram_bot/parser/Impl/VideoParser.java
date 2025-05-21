@@ -12,7 +12,7 @@ public final class VideoParser implements Parser {
 
     private VideoParser() {}
 
-    public static InputFile parse(String url){
+    public static InputFile parse(String url) throws IOException {
         try {
             URL destinationUrl = new URL(url);
 
@@ -22,7 +22,7 @@ public final class VideoParser implements Parser {
 
             return new InputFile(inputStream, "video.mp4");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
     }
 }

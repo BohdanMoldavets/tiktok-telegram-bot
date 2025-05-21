@@ -7,9 +7,14 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Repository
 public interface TelegramUserRepository extends CrudRepository<TelegramUser, Long> {
+
+    Set<TelegramUser> findAll();
+
+    Set<TelegramUser> findAllByStatusIsNotIn(Set<String> statuses);
 
     @Modifying
     @Query("UPDATE TelegramUser t SET t.lastModifiedDate = ?2 WHERE t.id = ?1")

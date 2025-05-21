@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  telegram-bot:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: tiktok-telegram-bot:latest
+    container_name: tiktok-telegram-bot-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    env_file:
+      - variables.env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tiktok-telegram-bot-database
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+
+  postgres:
+    image: postgres:15
+    container_name: tiktok-telegram-bot-database
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=tiktok-telegram-bot-database
+    ports:
+      - "5431:5432"

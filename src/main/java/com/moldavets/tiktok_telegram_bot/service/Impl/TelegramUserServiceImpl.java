@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Service
 public class TelegramUserServiceImpl implements TelegramUserService {
@@ -27,6 +28,21 @@ public class TelegramUserServiceImpl implements TelegramUserService {
     }
 
     @Override
+    public Set<TelegramUser> getAll() {
+        return telegramUserRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Set<TelegramUser> getAllActiveTelegramUsers() {
+        return telegramUserRepository.findAllByStatusIsNotIn(Set.of(
+                TelegramUserStatus.KICKED.getStatusName(),
+                TelegramUserStatus.LEFT.getStatusName(),
+                TelegramUserStatus.RESTRICTED.getStatusName()
+        ));
+    }
+
+    @Override
     @Transactional
     public void checkTelegramUserRegistration(Long userId, String username) {
         TelegramUser telegramUser = telegramUserRepository.findById(userId).orElse(null);
@@ -40,7 +56,7 @@ public class TelegramUserServiceImpl implements TelegramUserService {
                     )
             );
         } else {
-            telegramUserRepository.updateTelegramUserLastModifiedDateById(userId, Instant.now());
+            telegramUserRepository.updateTelegramUserStatusById(userId, TelegramUserStatus.MEMBER.getStatusName());
         }
     }
 

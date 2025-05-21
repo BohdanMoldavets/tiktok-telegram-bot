@@ -3,7 +3,10 @@ package com.moldavets.tiktok_telegram_bot.bot;
 import com.moldavets.tiktok_telegram_bot.callback.CallbackFacade;
 import com.moldavets.tiktok_telegram_bot.command.CommandContainer;
 import com.moldavets.tiktok_telegram_bot.downloader.DownloaderContainer;
+import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramLogger;
 import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
+import com.moldavets.tiktok_telegram_bot.service.AdsSenderService;
+import com.moldavets.tiktok_telegram_bot.service.Impl.AdsSenderServiceImpl;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,25 +17,32 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-@Slf4j
 @Component
 public class BotFacade {
 
     private final String COMMAND_PREFIX = "/";
+
+    private final Long ADS_CHANNEL_ID;
 
     private final CommandContainer commandContainer;
     private final DownloaderContainer downloaderContainer;
     private final CallbackFacade callbackFacade;
 
     private final TelegramUserService telegramUserService;
+    private final AdsSenderService adsSenderService;
 
     @Autowired
     public BotFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService,
-                     TelegramBot telegramBot,@Value("${telegram.bot.admin.id}") Long adminId) {
+                     TelegramBot telegramBot, @Value("${telegram.bot.admin.id}") Long adminId,
+                     @Value("${telegram.bot.ads.chat.id}") Long adsChatId,
+                     @Value("${telegram.bot.log.chat.id}") Long logChatId) {
         this.commandContainer = new CommandContainer(telegramUserService, telegramChannelService, adminId);
         this.downloaderContainer = new DownloaderContainer(telegramUserService, telegramChannelService, telegramBot);
         this.callbackFacade = new CallbackFacade(telegramUserService, telegramChannelService, telegramBot);
+        this.adsSenderService = new AdsSenderServiceImpl(telegramBot, telegramUserService, adminId);
         this.telegramUserService = telegramUserService;
+        this.ADS_CHANNEL_ID = adsChatId;
+        TelegramLogger.init(telegramBot, logChatId);
     }
 
     public BotApiMethod<?> processUpdate(Update update) {
@@ -47,6 +57,10 @@ public class BotFacade {
         if(update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             return callbackFacade.processCallback(callbackQuery.getData()).handle(callbackQuery);
+        }
+
+        if(update.hasChannelPost() && update.getChannelPost().getChatId().equals(ADS_CHANNEL_ID)) {
+            return adsSenderService.sendForwardMessageToAllUsers(update);
         }
 
         if(update.hasMessage() && update.getMessage().hasText()) {
