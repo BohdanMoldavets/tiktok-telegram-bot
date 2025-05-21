@@ -7,6 +7,7 @@ public enum MessageText {
     CALLBACK_FAILED_SUBSCRIPTION("Subscription Failed"),
     DOWNLOADER_ASSIGN_CAPTION("Download more tiktoks here TikTok @tiktok"),
     DOWNLOADER_NEXT_VIDEO_REQUEST("Send another link for download"),
+    DOWNLOADER_FAIL_WHILE_DOWNLOADING("Looks like you enter wrong link!"),
     DOWNLOADER_SUBSCRIPTION_REQUEST("Please subscribe on this groups for Download TikTok"),
     KEYBOARD_BUTTON_SUBSCRIPTION_REQUEST("Subscribe to this channel ✅"),
     KEYBOARD_BUTTON_CHECK_SUBSCRIPTION("Check subscription \uD83D\uDD04");

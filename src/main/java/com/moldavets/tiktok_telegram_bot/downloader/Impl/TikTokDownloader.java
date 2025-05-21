@@ -16,6 +16,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.IOException;
+
 public class TikTokDownloader implements Downloader {
 
     private TelegramBot telegramBot;
@@ -42,6 +44,8 @@ public class TikTokDownloader implements Downloader {
                 return new SendMessage(userId.toString(), MessageText.DOWNLOADER_NEXT_VIDEO_REQUEST.getMessageText());
             } catch (TelegramApiException e) {
                 throw new RuntimeException(e);
+            } catch (IOException ioe) {
+                return new SendMessage(userId.toString(), MessageText.DOWNLOADER_FAIL_WHILE_DOWNLOADING.getMessageText());
             }
         }
 

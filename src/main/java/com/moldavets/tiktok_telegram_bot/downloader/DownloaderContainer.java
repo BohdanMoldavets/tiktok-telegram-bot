@@ -23,6 +23,6 @@ public class DownloaderContainer {
         if(link.matches(TIKTOK_LINK_REGEX)) {
             return DOWNLOADER_MAP.get("TIKTOK");
         }
-        return DOWNLOADER_MAP.get("TIKTOK"); //todo change tiktok regex
+        return DOWNLOADER_MAP.get("TIKTOK"); //todo change to matches regex, when new downloader will be added
     }
 }
