@@ -4,7 +4,6 @@ package com.moldavets.tiktok_telegram_bot.command;
 import com.moldavets.tiktok_telegram_bot.command.Impl.AdministratorCommand;
 import com.moldavets.tiktok_telegram_bot.command.Impl.StartCommand;
 import com.moldavets.tiktok_telegram_bot.command.Impl.UnknownCommand;
-import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramLogger;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 

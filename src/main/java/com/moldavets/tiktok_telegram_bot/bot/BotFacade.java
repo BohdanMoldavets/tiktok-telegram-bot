@@ -3,13 +3,12 @@ package com.moldavets.tiktok_telegram_bot.bot;
 import com.moldavets.tiktok_telegram_bot.callback.CallbackFacade;
 import com.moldavets.tiktok_telegram_bot.command.CommandContainer;
 import com.moldavets.tiktok_telegram_bot.downloader.DownloaderContainer;
-import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramLogger;
+import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramCustomLogger;
 import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.service.AdsSenderService;
 import com.moldavets.tiktok_telegram_bot.service.Impl.AdsSenderServiceImpl;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -42,16 +41,22 @@ public class BotFacade {
         this.adsSenderService = new AdsSenderServiceImpl(telegramBot, telegramUserService, adminId);
         this.telegramUserService = telegramUserService;
         this.ADS_CHANNEL_ID = adsChatId;
-        TelegramLogger.init(telegramBot, logChatId);
+        TelegramCustomLogger.init(telegramBot, logChatId);
+        TelegramCustomLogger.getInstance().info("Telegram bot started");
     }
 
     public BotApiMethod<?> processUpdate(Update update) {
         if(update.hasMyChatMember()) {
             Long userId = update.getMyChatMember().getFrom().getId();
             String username = update.getMyChatMember().getFrom().getUserName();
+            String status = update.getMyChatMember().getNewChatMember().getStatus().toUpperCase();
+
             telegramUserService.checkTelegramUserRegistration(userId, username);
-            telegramUserService.updateStatusById(userId,
-                    TelegramUserStatus.valueOf(update.getMyChatMember().getNewChatMember().getStatus().toUpperCase()));
+
+            if(!status.equalsIgnoreCase(TelegramUserStatus.MEMBER.getStatusName())) {
+                telegramUserService.updateStatusById(userId,
+                        TelegramUserStatus.valueOf(status));
+            }
         }
 
         if(update.hasCallbackQuery()) {

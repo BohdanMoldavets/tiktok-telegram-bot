@@ -6,12 +6,15 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public interface TelegramBot {
 
     void execute(SendMessage sendMessage) throws TelegramApiException;
+
+    Message executeAndReturn(SendMessage sendMessage) throws TelegramApiException;
 
     void executePhoto(SendPhoto sendPhoto) throws TelegramApiException;
 

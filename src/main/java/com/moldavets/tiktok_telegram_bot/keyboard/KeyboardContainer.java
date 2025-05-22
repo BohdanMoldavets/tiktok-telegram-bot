@@ -14,8 +14,6 @@ public final class KeyboardContainer {
     private KeyboardContainer() {
     }
 
-    //todo factory
-
     public static InlineKeyboardMarkup getChannelsToSubscribeKeyboard(TelegramChannelService telegramChannelService) {
 
         List<List<InlineKeyboardButton>> resultKeyboard = new ArrayList<>();

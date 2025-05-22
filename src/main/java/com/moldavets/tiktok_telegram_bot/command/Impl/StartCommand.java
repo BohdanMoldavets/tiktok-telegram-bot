@@ -1,7 +1,6 @@
 package com.moldavets.tiktok_telegram_bot.command.Impl;
 
 import com.moldavets.tiktok_telegram_bot.command.Command;
-import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 import com.moldavets.tiktok_telegram_bot.utils.MessageText;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -21,6 +20,10 @@ public class StartCommand implements Command {
         Long userId = update.getMessage().getFrom().getId();
         String username = update.getMessage().getFrom().getUserName();
         telegramUserService.checkTelegramUserRegistration(userId, username);
-        return new SendMessage(userId.toString(), MessageText.COMMAND_START.getMessageText());
+        return SendMessage.builder()
+                .chatId(userId)
+                .text(MessageText.COMMAND_START.getMessageText())
+                .parseMode("html")
+                .build();
     }
 }
