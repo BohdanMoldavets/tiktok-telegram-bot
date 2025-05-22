@@ -13,6 +13,7 @@ import com.moldavets.tiktok_telegram_bot.utils.MessageText;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -42,17 +43,22 @@ public class TikTokDownloader implements Downloader {
 
         if (storedUser != null && storedUser.isSubscribed()) {
             try {
+
+                Message waitMessage = telegramBot.executeAndReturn(new SendMessage(userId.toString(), "⌛"));
+
                 SendVideo sendVideo = new SendVideo(userId.toString(), VideoParser.parse(TikTokParser.parse(link)));
                 sendVideo.setCaption(MessageText.DOWNLOADER_ASSIGN_CAPTION.getMessageText());
                 telegramBot.executeVideo(sendVideo);
                 TelegramCustomLogger.getInstance().info(String.format("User [%s] just download the [%s]", userId, link));
+
+                telegramBot.execute(new DeleteMessage(waitMessage.getChatId().toString(), waitMessage.getMessageId()));
                 return new SendMessage(userId.toString(), MessageText.DOWNLOADER_NEXT_VIDEO_REQUEST.getMessageText());
-            } catch (TelegramApiException e) {
+            } catch (TelegramApiException exception) {
                 TelegramCustomLogger.getInstance().error(
                         String.format("Something went wrong while downloading tiktok for [%s] with link [%s] exception [%s]",
                                 userId,
                                 link,
-                                e
+                                exception
                         )
                 );
                 return new SendMessage(userId.toString(), MessageText.DOWNLOADER_SOMETHING_WENT_WRONG.getMessageText());
@@ -64,7 +70,11 @@ public class TikTokDownloader implements Downloader {
                                 ioe
                         )
                 );
-                return new SendMessage(userId.toString(), MessageText.DOWNLOADER_FAIL_WHILE_DOWNLOADING.getMessageText());
+                return SendMessage.builder()
+                        .chatId(userId)
+                        .text(MessageText.DOWNLOADER_FAIL_WHILE_DOWNLOADING.getMessageText())
+                        .disableWebPagePreview(true)
+                        .build();
             }
         }
 
