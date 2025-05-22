@@ -1,5 +1,6 @@
 package com.moldavets.tiktok_telegram_bot.service.Impl;
 
+import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramCustomLogger;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
 import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.repository.TelegramUserRepository;
@@ -13,6 +14,8 @@ import java.util.Set;
 
 @Service
 public class TelegramUserServiceImpl implements TelegramUserService {
+
+    private TelegramCustomLogger LOGGER;
 
     private final TelegramUserRepository telegramUserRepository;
 
@@ -28,6 +31,7 @@ public class TelegramUserServiceImpl implements TelegramUserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Set<TelegramUser> getAll() {
         return telegramUserRepository.findAll();
     }
@@ -53,10 +57,19 @@ public class TelegramUserServiceImpl implements TelegramUserService {
                             username,
                             TelegramUserStatus.MEMBER.getStatusName(),
                             false
-                    )
+            ));
+            TelegramCustomLogger.getInstance().info(
+                    String.format("Registration for [%s|@%s] successful", userId, username)
             );
-        } else {
+        } else if (!telegramUser.getStatus().equals(TelegramUserStatus.MEMBER.getStatusName())){
             telegramUserRepository.updateTelegramUserStatusById(userId, TelegramUserStatus.MEMBER.getStatusName());
+            TelegramCustomLogger.getInstance().info(
+                    String.format("Status for [%s|%s] has been changed to %s",
+                    userId,
+                    username,
+                    TelegramUserStatus.MEMBER.getStatusName()
+                )
+            );
         }
     }
 
@@ -64,24 +77,34 @@ public class TelegramUserServiceImpl implements TelegramUserService {
     @Transactional
     public void save(TelegramUser telegramUser) {
         telegramUserRepository.save(telegramUser);
+        TelegramCustomLogger.getInstance().info(String.format("Registration for [%s|%s] successful",
+                telegramUser.getId(),
+                telegramUser.getUsername()
+        ));
     }
 
     @Override
     @Transactional
     public void updateStatusById(Long id, TelegramUserStatus telegramUserStatus) {
         telegramUserRepository.updateTelegramUserStatusById(id, telegramUserStatus.getStatusName());
+        TelegramCustomLogger.getInstance().info(String.format("Status for [%s] has been changed to %s", id, telegramUserStatus.getStatusName()));
     }
 
     @Override
     @Transactional
     public void updateSubscriptionForAllUsers(boolean isSubscribed) {
         telegramUserRepository.updateAllTelegramUsersSubscription(isSubscribed);
+        TelegramCustomLogger.getInstance().warn("Subscription for all users has been changed to " + isSubscribed);
     }
 
     @Override
     @Transactional
     public void updateSubscribeById(Long userId, Boolean isSubscribed) {
         telegramUserRepository.updateTelegramUserIsSubscribedById(userId, isSubscribed);
+        TelegramCustomLogger.getInstance().info(String.format("Subscription for [%s] has been changed to - %s",
+                userId,
+                isSubscribed
+        ));
     }
 
     @Override

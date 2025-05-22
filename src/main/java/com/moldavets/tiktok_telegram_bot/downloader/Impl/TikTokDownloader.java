@@ -3,6 +3,7 @@ package com.moldavets.tiktok_telegram_bot.downloader.Impl;
 import com.moldavets.tiktok_telegram_bot.bot.TelegramBot;
 import com.moldavets.tiktok_telegram_bot.downloader.Downloader;
 import com.moldavets.tiktok_telegram_bot.keyboard.KeyboardContainer;
+import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramCustomLogger;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
 import com.moldavets.tiktok_telegram_bot.parser.Impl.TikTokParser;
 import com.moldavets.tiktok_telegram_bot.parser.Impl.VideoParser;
@@ -34,19 +35,35 @@ public class TikTokDownloader implements Downloader {
     @Override
     public BotApiMethod<?> execute(Update update) {
         Long userId = update.getMessage().getFrom().getId();
+        String link = update.getMessage().getText();
 
         telegramUserService.checkTelegramUserRegistration(userId, update.getMessage().getFrom().getUserName());
         TelegramUser storedUser = telegramUserService.getById(userId);
 
         if (storedUser != null && storedUser.isSubscribed()) {
             try {
-                SendVideo sendVideo = new SendVideo(userId.toString(), VideoParser.parse(TikTokParser.parse(update.getMessage().getText())));
+                SendVideo sendVideo = new SendVideo(userId.toString(), VideoParser.parse(TikTokParser.parse(link)));
                 sendVideo.setCaption(MessageText.DOWNLOADER_ASSIGN_CAPTION.getMessageText());
                 telegramBot.executeVideo(sendVideo);
+                TelegramCustomLogger.getInstance().info(String.format("User [%s] just download the [%s]", userId, link));
                 return new SendMessage(userId.toString(), MessageText.DOWNLOADER_NEXT_VIDEO_REQUEST.getMessageText());
             } catch (TelegramApiException e) {
+                TelegramCustomLogger.getInstance().error(
+                        String.format("Something went wrong while downloading tiktok for [%s] with link [%s] exception [%s]",
+                                userId,
+                                link,
+                                e
+                        )
+                );
                 return new SendMessage(userId.toString(), MessageText.DOWNLOADER_SOMETHING_WENT_WRONG.getMessageText());
             } catch (IOException ioe) {
+                TelegramCustomLogger.getInstance().error(
+                        String.format("Something went wrong while downloading tiktok for [%s] with link [%s] exception [%s]",
+                                userId,
+                                link,
+                                ioe
+                        )
+                );
                 return new SendMessage(userId.toString(), MessageText.DOWNLOADER_FAIL_WHILE_DOWNLOADING.getMessageText());
             }
         }

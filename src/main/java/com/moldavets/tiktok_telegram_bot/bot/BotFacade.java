@@ -49,9 +49,14 @@ public class BotFacade {
         if(update.hasMyChatMember()) {
             Long userId = update.getMyChatMember().getFrom().getId();
             String username = update.getMyChatMember().getFrom().getUserName();
+            String status = update.getMyChatMember().getNewChatMember().getStatus().toUpperCase();
+
             telegramUserService.checkTelegramUserRegistration(userId, username);
-            telegramUserService.updateStatusById(userId,
-                    TelegramUserStatus.valueOf(update.getMyChatMember().getNewChatMember().getStatus().toUpperCase()));
+
+            if(!status.equalsIgnoreCase(TelegramUserStatus.MEMBER.getStatusName())) {
+                telegramUserService.updateStatusById(userId,
+                        TelegramUserStatus.valueOf(status));
+            }
         }
 
         if(update.hasCallbackQuery()) {

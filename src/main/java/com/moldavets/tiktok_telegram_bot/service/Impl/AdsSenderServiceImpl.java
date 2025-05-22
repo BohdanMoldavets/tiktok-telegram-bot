@@ -1,7 +1,9 @@
 package com.moldavets.tiktok_telegram_bot.service.Impl;
 
 import com.moldavets.tiktok_telegram_bot.bot.TelegramBot;
+import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramCustomLogger;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
+import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.service.AdsSenderService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 import com.moldavets.tiktok_telegram_bot.utils.MessageText;
@@ -31,56 +33,92 @@ public class AdsSenderServiceImpl implements AdsSenderService {
 
     @Override
     public SendMessage sendForwardMessageToAllUsers(Update update) {
+        Integer resultCountUsersWhichReceiveAd = 0;
         Message message = update.getChannelPost();
         Set<TelegramUser> allActiveUsersSet = telegramUserService.getAllActiveTelegramUsers();
 
-        try {
-            if(message.hasVideo()) {
-                handleVideoAd(allActiveUsersSet, update);
-            } else if(message.hasPhoto()) {
-                handlePhotoAd(allActiveUsersSet, update);
-            } else if(message.hasText()) {
-                handleTextAd(allActiveUsersSet, update);
-            }
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e); //todo delete
+        if(message.hasVideo()) {
+            resultCountUsersWhichReceiveAd = handleVideoAd(allActiveUsersSet, update);
+        } else if(message.hasPhoto()) {
+            resultCountUsersWhichReceiveAd = handlePhotoAd(allActiveUsersSet, update);
+        } else if(message.hasText()) {
+            resultCountUsersWhichReceiveAd = handleTextAd(allActiveUsersSet, update);
         }
 
         return new SendMessage(
                 ADMIN_ID.toString(),
-                MessageText.ADS_AMOUNT_OF_USERS_WHO_RECEIVED_AD.getMessageText() + " - " + allActiveUsersSet.size()
+                MessageText.ADS_AMOUNT_OF_USERS_WHO_RECEIVED_AD.getMessageText() + " - " + resultCountUsersWhichReceiveAd
         );
     }
 
-    private void handleTextAd(Set<TelegramUser> telegramUsers, Update update) throws TelegramApiException {
+    private Integer handleTextAd(Set<TelegramUser> telegramUsers, Update update) {
+        Integer countUsersWhichReceiveAd = 0;
+
         SendMessage sendMessage = new SendMessage();
         sendMessage.setText(update.getChannelPost().getText());
         sendMessage.setReplyMarkup(update.getChannelPost().getReplyMarkup());
+
         for (TelegramUser telegramUser : telegramUsers) {
-            sendMessage.setChatId(telegramUser.getId());
-            telegramBot.execute(sendMessage);
+            Long userId = telegramUser.getId();
+            sendMessage.setChatId(userId);
+
+            try {
+                telegramBot.execute(sendMessage);
+                countUsersWhichReceiveAd++;
+            } catch (TelegramApiException e) {
+                TelegramCustomLogger.getInstance().error(
+                        String.format("Something went wrong while send text ad to user [%s] exception [%s]", userId, e));
+                telegramUserService.updateStatusById(userId, TelegramUserStatus.KICKED);
+            }
         }
+        return countUsersWhichReceiveAd;
     }
 
-    private void handlePhotoAd(Set<TelegramUser> telegramUsers, Update update) throws TelegramApiException {
+    private Integer handlePhotoAd(Set<TelegramUser> telegramUsers, Update update) {
+        Integer countUsersWhichReceiveAd = 0;
+
         SendPhoto sendPhoto = new SendPhoto();
         sendPhoto.setPhoto(new InputFile(update.getChannelPost().getPhoto().getLast().getFileId()));
         sendPhoto.setCaption(update.getChannelPost().getCaption());
         sendPhoto.setReplyMarkup(update.getChannelPost().getReplyMarkup());
+
         for (TelegramUser telegramUser : telegramUsers) {
-            sendPhoto.setChatId(telegramUser.getId());
-            telegramBot.executePhoto(sendPhoto);
+            Long userId = telegramUser.getId();
+            sendPhoto.setChatId(userId);
+
+            try {
+                telegramBot.executePhoto(sendPhoto);
+                countUsersWhichReceiveAd++;
+            } catch (TelegramApiException e) {
+                TelegramCustomLogger.getInstance().error(
+                        String.format("Something went wrong while send photo ad to user [%s] exception [%s]", userId, e));
+                telegramUserService.updateStatusById(userId, TelegramUserStatus.KICKED);
+            }
         }
+        return countUsersWhichReceiveAd;
     }
 
-    private void handleVideoAd(Set<TelegramUser> telegramUsers, Update update) throws TelegramApiException {
+    private Integer handleVideoAd(Set<TelegramUser> telegramUsers, Update update) {
+        Integer countUsersWhichReceiveAd = 0;
+
         SendVideo sendVideo = new SendVideo();
         sendVideo.setVideo(new InputFile(update.getChannelPost().getVideo().getFileId()));
         sendVideo.setCaption(update.getChannelPost().getCaption());
         sendVideo.setReplyMarkup(update.getChannelPost().getReplyMarkup());
+
         for (TelegramUser telegramUser : telegramUsers) {
-            sendVideo.setChatId(telegramUser.getId());
-            telegramBot.executeVideo(sendVideo);
+            Long userId = telegramUser.getId();
+            sendVideo.setChatId(userId);
+
+            try {
+                telegramBot.executeVideo(sendVideo);
+                countUsersWhichReceiveAd++;
+            } catch (TelegramApiException e) {
+                TelegramCustomLogger.getInstance().error(
+                        String.format("Something went wrong while send video ad to user [%s] exception [%s]", userId, e));
+                telegramUserService.updateStatusById(userId, TelegramUserStatus.KICKED);
+            }
         }
+        return countUsersWhichReceiveAd;
     }
 }

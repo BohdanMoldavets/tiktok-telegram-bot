@@ -5,6 +5,7 @@ import com.moldavets.tiktok_telegram_bot.logger.CustomLogger;
 import com.moldavets.tiktok_telegram_bot.logger.LogType;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.LinkPreviewOptions;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.LocalDateTime;
@@ -13,10 +14,6 @@ import java.time.LocalDateTime;
 public class TelegramCustomLogger implements CustomLogger {
 
     private static TelegramCustomLogger instance;
-
-    private static final String INFO_MARK = "[INFO] ";
-    private static final String WARN_MARK = "[WARN] ";
-    private static final String ERROR_MARK = "[ERROR] ";
 
     private final Long LOG_CHAT_ID;
     private final TelegramBot telegramBot;
@@ -55,13 +52,13 @@ public class TelegramCustomLogger implements CustomLogger {
     }
 
     private void executeLog(String message, LogType logType) {
+        SendMessage sendMessage = new SendMessage(
+                LOG_CHAT_ID.toString(),
+                LocalDateTime.now() + logType.getLogMark() + message
+        );
+        sendMessage.disableWebPagePreview();
         try {
-            telegramBot.execute(
-                    new SendMessage(
-                            LOG_CHAT_ID.toString(),
-                            LocalDateTime.now() + logType.getLogMark() + message
-                    )
-            );
+            telegramBot.execute(sendMessage);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e); //todo
         }

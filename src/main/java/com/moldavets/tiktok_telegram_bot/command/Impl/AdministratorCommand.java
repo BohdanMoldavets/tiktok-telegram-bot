@@ -72,37 +72,42 @@ public class AdministratorCommand implements Command {
             case "groups":
                 return new SendMessage(
                         ADMIN_ID.toString(),
-                        formatChannelsMessage(telegramChannelService.getAllWhereStatusIsActive())
+                        getChannelsMessage()
                 );
 
             case "users":
-                StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder
-                        .append(MessageText.COMMAND_ADMINISTRATOR_ACTIVE_USERS_COUNT.getMessageText())
-                        .append(" - [")
-                        .append(telegramUserService.getAllActiveTelegramUsers().size())
-                        .append("]\n\n")
-                        .append(MessageText.COMMAND_ADMINISTRATOR_ALL_USERS_COUNT.getMessageText())
-                        .append(" - [")
-                        .append(telegramUserService.getAll().size())
-                        .append("]");
                 return new SendMessage(
                         ADMIN_ID.toString(),
-                        stringBuilder.toString()
+                        getUsersMessage()
                 );
         }
         return null;
     }
 
-    private String formatChannelsMessage(List<TelegramChannel> channels) {
+    private String getUsersMessage() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder
+                .append(MessageText.COMMAND_ADMINISTRATOR_ACTIVE_USERS_COUNT.getMessageText())
+                .append(" - [")
+                .append(telegramUserService.getAllActiveTelegramUsers().size())
+                .append("]\n\n")
+                .append(MessageText.COMMAND_ADMINISTRATOR_ALL_USERS_COUNT.getMessageText())
+                .append(" - [")
+                .append(telegramUserService.getAll().size())
+                .append("]");
+        return stringBuilder.toString();
+    }
+
+    private String getChannelsMessage() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("All available channels:\n");
-        for (TelegramChannel channel : channels) {
+        for (TelegramChannel channel : telegramChannelService.getAllWhereStatusIsActive()) {
             stringBuilder
                     .append("Id: ")
                     .append(channel.getId())
                     .append(" Link: ")
-                    .append(channel.getChannelLink());
+                    .append(channel.getChannelLink())
+                    .append("\n");
         }
         return stringBuilder.toString();
     }

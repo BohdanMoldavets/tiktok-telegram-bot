@@ -1,7 +1,6 @@
 package com.moldavets.tiktok_telegram_bot.command.Impl;
 
 import com.moldavets.tiktok_telegram_bot.command.Command;
-import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
 import com.moldavets.tiktok_telegram_bot.utils.MessageText;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
