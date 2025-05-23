@@ -4,6 +4,7 @@ import com.moldavets.tiktok_telegram_bot.callback.CallbackFacade;
 import com.moldavets.tiktok_telegram_bot.command.CommandContainer;
 import com.moldavets.tiktok_telegram_bot.downloader.DownloaderContainer;
 import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramCustomLogger;
+import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
 import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.service.AdsSenderService;
 import com.moldavets.tiktok_telegram_bot.service.Impl.AdsSenderServiceImpl;
@@ -61,6 +62,9 @@ public class BotFacade {
 
         if(update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
+            if(this.isTelegramUserBanned(callbackQuery.getFrom().getId())) {
+                return null;
+            }
             return callbackFacade.processCallback(callbackQuery.getData()).handle(callbackQuery);
         }
 
@@ -70,10 +74,19 @@ public class BotFacade {
 
         if(update.hasMessage() && update.getMessage().hasText()) {
             String message = update.getMessage().getText().trim();
+            if(this.isTelegramUserBanned(update.getMessage().getFrom().getId())) {
+                return null;
+            }
             return message.startsWith(COMMAND_PREFIX) ?
                     commandContainer.retrieveCommand(message).execute(update) : downloaderContainer.processDownloader(message).execute(update);
         }
 
         return null;
+    }
+
+
+    public Boolean isTelegramUserBanned(Long userId) {
+        TelegramUser storedTelegramUser = telegramUserService.getById(userId);
+        return storedTelegramUser != null && storedTelegramUser.isBanned();
     }
 }
