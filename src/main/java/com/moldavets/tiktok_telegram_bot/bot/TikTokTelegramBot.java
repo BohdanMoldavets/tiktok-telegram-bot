@@ -59,7 +59,6 @@ public class TikTokTelegramBot extends TelegramLongPollingBot implements Telegra
 
     @Override
     public Message executeAndReturn(SendMessage sendMessage) throws TelegramApiException {
-//        sendMessage.enableHtml(true);
         return super.execute(sendMessage);
     }
 
