@@ -71,7 +71,11 @@ public class SubscriptionCheckerCallbackHandler implements CallbackHandler {
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
-        return new SendMessage(userId.toString(), MessageText.CALLBACK_FAILED_SUBSCRIPTION.getMessageText());
+        return SendMessage.builder()
+                .chatId(userId)
+                .text(MessageText.CALLBACK_FAILED_SUBSCRIPTION.getMessageText())
+                .parseMode("html")
+                .build();
     }
 
 }

@@ -19,6 +19,9 @@ public class TelegramUser extends AbstractAuditingEntity<Long> {
     @Column(name = "is_subscribed")
     private Boolean isSubscribed;
 
+    @Column(name = "is_banned")
+    private Boolean isBanned;
+
     public TelegramUser() {
     }
 
@@ -60,5 +63,13 @@ public class TelegramUser extends AbstractAuditingEntity<Long> {
 
     public void setSubscribed(Boolean subscribed) {
         isSubscribed = subscribed;
+    }
+
+    public Boolean isBanned() {
+        return isBanned;
+    }
+
+    public void setBanned(Boolean banned) {
+        isBanned = banned;
     }
 }
