@@ -30,6 +30,7 @@ public class TelegramUser extends AbstractAuditingEntity<Long> {
         this.username = username;
         this.status = status;
         this.isSubscribed = isSubscribed;
+        this.isBanned = false;
     }
 
     @Override

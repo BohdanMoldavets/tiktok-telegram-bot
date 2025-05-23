@@ -14,6 +14,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="is_subscribed" type="BOOLEAN"/>
+            <column name="is_banned" type="BOOLEAN"/>
             <column name="created_date" type="DATETIME"/>
             <column name="last_modified_date" type="DATETIME"/>
         </createTable>
