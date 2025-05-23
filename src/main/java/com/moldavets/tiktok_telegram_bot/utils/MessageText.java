@@ -7,6 +7,8 @@ public enum MessageText {
     COMMAND_ADMINISTRATOR_ALL_USERS_COUNT("Количество всех пользователей"),
     COMMAND_ADMINISTRATOR_CHANNEL_ADDED("Добавлен новый канал с id"),
     COMMAND_ADMINISTRATOR_CHANNEL_DELETED("Удален канал с id"),
+    COMMAND_ADMINISTRATOR_USER_BAN("Пользователь успешно забанен id"),
+    COMMAND_ADMINISTRATOR_USER_UNBAN("Пользователь успешно разбанен id"),
     COMMAND_UNKNOWN("Команда не найдена❌"),
     CALLBACK_SUCCESSFUL_SUBSCRIPTION("\uD83C\uDD97 Вы подписались на каналы, теперь можете скачивать видео. Пожалуйста, пришлите ссылку на видео с TikTok."),
     CALLBACK_FAILED_SUBSCRIPTION("<b>Вы ещё не подписались на необходимые каналы.</b>\nПодпишитесь и попробуйте ещё раз"),

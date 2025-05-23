@@ -15,8 +15,6 @@ import java.util.Set;
 @Service
 public class TelegramUserServiceImpl implements TelegramUserService {
 
-    private TelegramCustomLogger LOGGER;
-
     private final TelegramUserRepository telegramUserRepository;
 
     @Autowired
@@ -111,5 +109,11 @@ public class TelegramUserServiceImpl implements TelegramUserService {
     @Transactional
     public void updateLastModifiedDateById(Long id) {
         telegramUserRepository.updateTelegramUserLastModifiedDateById(id, Instant.now());
+    }
+
+    @Override
+    @Transactional
+    public void updateIsBannedById(Long id, Boolean isBanned) {
+        telegramUserRepository.updateTelegramUserIsBannedById(id, isBanned);
     }
 }

@@ -24,4 +24,6 @@ public interface TelegramUserService {
     void updateSubscribeById(Long userId, Boolean subscribe);
 
     void updateLastModifiedDateById(Long id);
+
+    void updateIsBannedById(Long id, Boolean isBanned);
 }
