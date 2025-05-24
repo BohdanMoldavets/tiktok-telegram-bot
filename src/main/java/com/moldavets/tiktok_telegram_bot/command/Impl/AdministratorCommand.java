@@ -10,8 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.List;
-
 public class AdministratorCommand implements Command {
 
     private final Long ADMIN_ID;
@@ -34,7 +32,8 @@ public class AdministratorCommand implements Command {
         if (userId.equals(ADMIN_ID) && splitMessage.length > 1) {
 
             if(splitMessage[1].equals("add") || splitMessage[1].equals("delete")
-                    || splitMessage[1].equals("users") || splitMessage[1].equals("groups")) {
+                    || splitMessage[1].equals("users") || splitMessage[1].equals("groups")
+                    || splitMessage[1].equals("ban") || splitMessage[1].equals("unban")) {
                 sendMessage = processCommand(splitMessage);
             }
 
@@ -67,6 +66,22 @@ public class AdministratorCommand implements Command {
                 return new SendMessage(
                         ADMIN_ID.toString(),
                         MessageText.COMMAND_ADMINISTRATOR_CHANNEL_DELETED.getMessageText() + " - [" + channelIdToDelete + "]"
+                );
+
+            case "ban":
+                Long userIdWhoWillBeBanned = Long.parseLong(command[2]);
+                telegramUserService.updateIsBannedById(userIdWhoWillBeBanned, true);
+                return new SendMessage(
+                        ADMIN_ID.toString(),
+                        MessageText.COMMAND_ADMINISTRATOR_USER_BAN.getMessageText() + " - [" + userIdWhoWillBeBanned + "]"
+                );
+
+            case "unban":
+                Long userIdWhoWillBeUnbanned = Long.parseLong(command[2]);
+                telegramUserService.updateIsBannedById(userIdWhoWillBeUnbanned, false);
+                return new SendMessage(
+                        ADMIN_ID.toString(),
+                        MessageText.COMMAND_ADMINISTRATOR_USER_UNBAN.getMessageText() + " - [" + userIdWhoWillBeUnbanned + "]"
                 );
 
             case "groups":

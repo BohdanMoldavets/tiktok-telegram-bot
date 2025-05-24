@@ -61,7 +61,11 @@ public class TikTokDownloader implements Downloader {
                                 exception
                         )
                 );
-                return new SendMessage(userId.toString(), MessageText.DOWNLOADER_SOMETHING_WENT_WRONG.getMessageText());
+                return SendMessage.builder()
+                        .chatId(userId)
+                        .text(MessageText.DOWNLOADER_SOMETHING_WENT_WRONG.getMessageText())
+                        .parseMode("html")
+                        .build();
             } catch (IOException ioe) {
                 TelegramCustomLogger.getInstance().error(
                         String.format("Something went wrong while downloading tiktok for [%s] with link [%s] exception [%s]",
@@ -74,12 +78,16 @@ public class TikTokDownloader implements Downloader {
                         .chatId(userId)
                         .text(MessageText.DOWNLOADER_FAIL_WHILE_DOWNLOADING.getMessageText())
                         .disableWebPagePreview(true)
+                        .parseMode("html")
                         .build();
             }
         }
 
-        SendMessage message = new SendMessage(userId.toString(), MessageText.DOWNLOADER_SUBSCRIPTION_REQUEST.getMessageText());
-        message.setReplyMarkup(KeyboardContainer.getChannelsToSubscribeKeyboard(telegramChannelService));
-        return message;
+        return SendMessage.builder()
+                .chatId(userId)
+                .text(MessageText.DOWNLOADER_SUBSCRIPTION_REQUEST.getMessageText())
+                .replyMarkup(KeyboardContainer.getChannelsToSubscribeKeyboard(telegramChannelService))
+                .parseMode("html")
+                .build();
     }
 }

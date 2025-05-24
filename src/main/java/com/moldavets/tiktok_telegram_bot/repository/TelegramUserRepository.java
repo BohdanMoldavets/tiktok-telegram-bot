@@ -32,4 +32,8 @@ public interface TelegramUserRepository extends CrudRepository<TelegramUser, Lon
     @Query("UPDATE TelegramUser t SET t.isSubscribed=?1")
     void updateAllTelegramUsersSubscription(boolean isSubscribed);
 
+    @Modifying
+    @Query("UPDATE TelegramUser t SET t.isBanned = ?2 WHERE t.id = ?1")
+    void updateTelegramUserIsBannedById(Long id, Boolean isBanned);
+
 }

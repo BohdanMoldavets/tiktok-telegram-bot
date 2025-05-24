@@ -45,6 +45,10 @@ public class AdsSenderServiceImpl implements AdsSenderService {
             resultCountUsersWhichReceiveAd = handleTextAd(allActiveUsersSet, update);
         }
 
+
+        TelegramCustomLogger.getInstance().info(
+                MessageText.ADS_AMOUNT_OF_USERS_WHO_RECEIVED_AD.getMessageText() + " - " + resultCountUsersWhichReceiveAd
+        );
         return new SendMessage(
                 ADMIN_ID.toString(),
                 MessageText.ADS_AMOUNT_OF_USERS_WHO_RECEIVED_AD.getMessageText() + " - " + resultCountUsersWhichReceiveAd
