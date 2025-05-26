@@ -81,4 +81,19 @@ class TikTokParserTest {
             assertThrows(IOException.class, () -> TikTokParser.parse(testUrl));
         }
     }
+
+    @Test
+    void parse_shouldThrowException_whenInputContainsEmptyString() {
+        assertThrows(NullPointerException.class, () -> TikTokParser.parse(""));
+    }
+
+    @Test
+    void parse_shouldThrowException_whenInputContainsStringWithOnlySpaces() {
+        assertThrows(NullPointerException.class, () -> TikTokParser.parse("  "));
+    }
+
+    @Test
+    void parse_shouldThrowException_whenInputContainsNull() {
+        assertThrows(NullPointerException.class, () -> TikTokParser.parse(null));
+    }
 }

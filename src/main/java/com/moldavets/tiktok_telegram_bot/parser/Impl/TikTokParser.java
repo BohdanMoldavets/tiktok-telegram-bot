@@ -10,6 +10,10 @@ import java.io.IOException;
 public class TikTokParser implements Parser {
 
     public static String parse(String videoUrl) throws IOException {
+        if(videoUrl == null || videoUrl.trim().isEmpty()) {
+            throw new NullPointerException("Url cannot be null or empty");
+        }
+
         try {
             Elements elements = Jsoup.connect("https://ttsave.app/download")
                     .data("query", videoUrl)
