@@ -41,7 +41,7 @@ public class TikTokDownloader implements Downloader {
         telegramUserService.checkTelegramUserRegistration(userId, update.getMessage().getFrom().getUserName());
         TelegramUser storedUser = telegramUserService.getById(userId);
 
-        if (storedUser != null && storedUser.isSubscribed()) {
+        if (storedUser.isSubscribed()) {
             try {
                 Message waitMessage = telegramBot.executeAndReturn(new SendMessage(userId.toString(), "⌛"));
 
