@@ -11,7 +11,8 @@ public class CallbackFacade {
 
     private final Map<String, CallbackHandler> CALLBACK_HANDLER_MAP;
 
-    public CallbackFacade(TelegramUserService telegramUserService, TelegramChannelService telegramChannelService, TelegramBot telegramBot) {
+    public CallbackFacade(TelegramUserService telegramUserService,
+                          TelegramChannelService telegramChannelService, TelegramBot telegramBot) {
         this.CALLBACK_HANDLER_MAP = Map.of(
                 "CHECK_SUBSCRIPTION_ON_REQUIRED_CHANNELS", new SubscriptionCheckerCallbackHandler(telegramUserService, telegramChannelService, telegramBot)
         );
