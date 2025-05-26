@@ -2,6 +2,7 @@ package com.moldavets.tiktok_telegram_bot.service.Impl;
 
 import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramCustomLogger;
 import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
+import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.repository.TelegramUserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.Set;
 
@@ -120,7 +122,7 @@ class TelegramUserServiceImplTest {
     }
 
     @Test
-    void checkTelegramUserRegistration_shouldUpdateTelegramUserStatusToMember_whenInputContainsStoredTelegramUser() {
+    void checkTelegramUserRegistration_shouldUpdateTelegramUserStatusToMember_whenInputContainsStoredTelegramUserWhoseStatusIsKicked() {
         TelegramUser telegramUser = new TelegramUser(1L, "test", "kicked", true);
 
         Mockito.when(telegramUserRepository.findById(anyLong())).thenReturn(Optional.of(telegramUser));
@@ -147,5 +149,90 @@ class TelegramUserServiceImplTest {
 
         Mockito.verify(telegramUserRepository, Mockito.times(1)).findById(anyLong());
         Mockito.verify(telegramUserRepository, Mockito.times(0)).updateTelegramUserStatusById(anyLong(), anyString());
+    }
+
+    @Test
+    void save_shouldSaveTelegramUser_whenInputContainsValidTelegramUser() {
+        TelegramUser telegramUser = new TelegramUser(1L, "test", "member", true);
+        Mockito.when(telegramUserRepository.save(any(TelegramUser.class))).thenReturn(telegramUser);
+
+        try (MockedStatic<TelegramCustomLogger> mockedLogger = Mockito.mockStatic(TelegramCustomLogger.class)) {
+            TelegramCustomLogger telegramCustomLogger = Mockito.mock(TelegramCustomLogger.class);
+            mockedLogger.when(TelegramCustomLogger::getInstance).thenReturn(telegramCustomLogger);
+
+            telegramUserServiceImpl.save(telegramUser);
+
+            Mockito.verify(telegramUserRepository, Mockito.times(1)).save(any(TelegramUser.class));
+        }
+    }
+
+    @Test
+    void updateStatusById_shouldUpdateTelegramUserStatus_whenInputContainsValidData() {
+        Mockito.doNothing().when(telegramUserRepository).updateTelegramUserStatusById(anyLong(), anyString());
+
+        try (MockedStatic<TelegramCustomLogger> mockedLogger = Mockito.mockStatic(TelegramCustomLogger.class)) {
+            TelegramCustomLogger telegramCustomLogger = Mockito.mock(TelegramCustomLogger.class);
+            mockedLogger.when(TelegramCustomLogger::getInstance).thenReturn(telegramCustomLogger);
+
+            telegramUserServiceImpl.updateStatusById(1L, TelegramUserStatus.KICKED);
+
+            Mockito.verify(telegramUserRepository, Mockito.times(1)).updateTelegramUserStatusById(anyLong(), anyString());
+        }
+    }
+
+    @Test
+    void updateSubscriptionForAllUsers_shouldUpdateSubscriptionForAllUsers_whenInputContainsValidData() {
+        Mockito.doNothing().when(telegramUserRepository).updateAllTelegramUsersSubscription(anyBoolean());
+
+        try (MockedStatic<TelegramCustomLogger> mockedLogger = Mockito.mockStatic(TelegramCustomLogger.class)) {
+            TelegramCustomLogger telegramCustomLogger = Mockito.mock(TelegramCustomLogger.class);
+            mockedLogger.when(TelegramCustomLogger::getInstance).thenReturn(telegramCustomLogger);
+
+            telegramUserServiceImpl.updateSubscriptionForAllUsers(false);
+
+            Mockito.verify(telegramUserRepository, Mockito.times(1)).updateAllTelegramUsersSubscription(anyBoolean());
+        }
+    }
+
+    @Test
+    void updateSubscribeById_shouldUpdateSubscribe_whenInputContainsValidData() {
+        Mockito.doNothing().when(telegramUserRepository).updateTelegramUserIsSubscribedById(anyLong(), anyBoolean());
+
+        try (MockedStatic<TelegramCustomLogger> mockedLogger = Mockito.mockStatic(TelegramCustomLogger.class)) {
+            TelegramCustomLogger telegramCustomLogger = Mockito.mock(TelegramCustomLogger.class);
+            mockedLogger.when(TelegramCustomLogger::getInstance).thenReturn(telegramCustomLogger);
+
+            telegramUserServiceImpl.updateSubscribeById(1L, true);
+
+            Mockito.verify(telegramUserRepository, Mockito.times(1)).updateTelegramUserIsSubscribedById(anyLong(), anyBoolean());
+        }
+    }
+
+    @Test
+    void updateLastModifiedDateById_shouldUpdateLastModifiedDate_whenInputContainsValidData() {
+        Mockito.doNothing().when(telegramUserRepository).updateTelegramUserLastModifiedDateById(anyLong(), any(Instant.class));
+
+        try (MockedStatic<TelegramCustomLogger> mockedLogger = Mockito.mockStatic(TelegramCustomLogger.class)) {
+            TelegramCustomLogger telegramCustomLogger = Mockito.mock(TelegramCustomLogger.class);
+            mockedLogger.when(TelegramCustomLogger::getInstance).thenReturn(telegramCustomLogger);
+
+            telegramUserServiceImpl.updateLastModifiedDateById(1L);
+
+            Mockito.verify(telegramUserRepository, Mockito.times(1)).updateTelegramUserLastModifiedDateById(anyLong(), any(Instant.class));
+        }
+    }
+
+    @Test
+    void updateIsBannedById_shouldUpdateIsBanned_whenInputContainsValidData() {
+        Mockito.doNothing().when(telegramUserRepository).updateTelegramUserIsBannedById(anyLong(), anyBoolean());
+
+        try (MockedStatic<TelegramCustomLogger> mockedLogger = Mockito.mockStatic(TelegramCustomLogger.class)) {
+            TelegramCustomLogger telegramCustomLogger = Mockito.mock(TelegramCustomLogger.class);
+            mockedLogger.when(TelegramCustomLogger::getInstance).thenReturn(telegramCustomLogger);
+
+            telegramUserServiceImpl.updateIsBannedById(1L, true);
+
+            Mockito.verify(telegramUserRepository, Mockito.times(1)).updateTelegramUserIsBannedById(anyLong(), anyBoolean());
+        }
     }
 }
