@@ -43,7 +43,6 @@ public class TikTokDownloader implements Downloader {
 
         if (storedUser != null && storedUser.isSubscribed()) {
             try {
-
                 Message waitMessage = telegramBot.executeAndReturn(new SendMessage(userId.toString(), "⌛"));
 
                 SendVideo sendVideo = new SendVideo(userId.toString(), VideoParser.parse(TikTokParser.parse(link)));
@@ -52,7 +51,7 @@ public class TikTokDownloader implements Downloader {
                 TelegramCustomLogger.getInstance().info(String.format("User [%s] just download the [%s]", userId, link));
 
                 telegramBot.execute(new DeleteMessage(waitMessage.getChatId().toString(), waitMessage.getMessageId()));
-                return new SendMessage(userId.toString(), MessageText.DOWNLOADER_NEXT_VIDEO_REQUEST.getMessageText());
+                return this.createSendMessageBuilder(userId, MessageText.DOWNLOADER_NEXT_VIDEO_REQUEST.getMessageText()).build();
             } catch (TelegramApiException exception) {
                 TelegramCustomLogger.getInstance().error(
                         String.format("Something went wrong while downloading tiktok for [%s] with link [%s] exception [%s]",
@@ -61,11 +60,7 @@ public class TikTokDownloader implements Downloader {
                                 exception
                         )
                 );
-                return SendMessage.builder()
-                        .chatId(userId)
-                        .text(MessageText.DOWNLOADER_SOMETHING_WENT_WRONG.getMessageText())
-                        .parseMode("html")
-                        .build();
+                return this.createSendMessageBuilder(userId, MessageText.DOWNLOADER_SOMETHING_WENT_WRONG.getMessageText()).build();
             } catch (IOException ioe) {
                 TelegramCustomLogger.getInstance().error(
                         String.format("Something went wrong while downloading tiktok for [%s] with link [%s] exception [%s]",
@@ -74,20 +69,21 @@ public class TikTokDownloader implements Downloader {
                                 ioe
                         )
                 );
-                return SendMessage.builder()
-                        .chatId(userId)
-                        .text(MessageText.DOWNLOADER_FAIL_WHILE_DOWNLOADING.getMessageText())
+                return this.createSendMessageBuilder(userId, MessageText.DOWNLOADER_FAIL_WHILE_DOWNLOADING.getMessageText())
                         .disableWebPagePreview(true)
-                        .parseMode("html")
                         .build();
             }
         }
 
+        return this.createSendMessageBuilder(userId, MessageText.DOWNLOADER_SUBSCRIPTION_REQUEST.getMessageText())
+                .replyMarkup(KeyboardContainer.getChannelsToSubscribeKeyboard(telegramChannelService))
+                .build();
+    }
+
+    private SendMessage.SendMessageBuilder createSendMessageBuilder(Long userId, String message) {
         return SendMessage.builder()
                 .chatId(userId)
-                .text(MessageText.DOWNLOADER_SUBSCRIPTION_REQUEST.getMessageText())
-                .replyMarkup(KeyboardContainer.getChannelsToSubscribeKeyboard(telegramChannelService))
-                .parseMode("html")
-                .build();
+                .text(message)
+                .parseMode("html");
     }
 }
