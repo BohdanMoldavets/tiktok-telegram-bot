@@ -5,6 +5,7 @@ import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramUser;
 import com.moldavets.tiktok_telegram_bot.model.TelegramUserStatus;
 import com.moldavets.tiktok_telegram_bot.repository.TelegramUserRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,10 +30,22 @@ class TelegramUserServiceImplTest {
     @InjectMocks
     TelegramUserServiceImpl telegramUserServiceImpl;
 
+    private TelegramUser telegramUser1;
+    private TelegramUser telegramUser2;
+    private TelegramUser telegramUser3;
+
+    @BeforeEach
+    void setUp() {
+        telegramUser1 = new TelegramUser(1L, "test1", "member", true);
+        telegramUser2 = new TelegramUser(2L, "test2", "member", true);
+        telegramUser3 = new TelegramUser(3L, "test3", "kicked", true);
+
+    }
+
     @Test
     void getById_shouldReturnTelegramUser_whenInputContainsExistingTelegramUserId() {
         Mockito.when(telegramUserRepository.findById(anyLong()))
-                .thenReturn(Optional.of(new TelegramUser(1L, "test", "member", true)));
+                .thenReturn(Optional.of(telegramUser1));
 
         Long expected = 1L;
         Long actual = telegramUserServiceImpl.getById(1L).getId();
@@ -53,10 +66,6 @@ class TelegramUserServiceImplTest {
 
     @Test
     void getAll_shouldReturnAllTelegramUsers_whenTelegramUsersExist() {
-        TelegramUser telegramUser1 = new TelegramUser(1L, "test", "member", true);
-        TelegramUser telegramUser2 = new TelegramUser(2L, "test2", "member2", true);
-
-
         Mockito.when(telegramUserRepository.findAll()).thenReturn(Set.of(
                 telegramUser1, telegramUser2
         ));
@@ -80,9 +89,6 @@ class TelegramUserServiceImplTest {
 
     @Test
     void getAllActiveTelegramUsers_shouldReturnAllActiveTelegramUsers_whenActiveTelegramUsersExist() {
-        TelegramUser telegramUser1 = new TelegramUser(1L, "test", "member", true);
-        TelegramUser telegramUser2 = new TelegramUser(2L, "test2", "member2", true);
-
         Mockito.when(telegramUserRepository.findAllByStatusIsNotIn(anySet()))
                 .thenReturn(Set.of(telegramUser1, telegramUser2));
 
@@ -105,10 +111,8 @@ class TelegramUserServiceImplTest {
 
     @Test
     void checkTelegramUserRegistration_shouldSaveTelegramUser_whenInputContainsNotStoredTelegramUser() {
-        TelegramUser telegramUser = new TelegramUser(1L, "test", "member", true);
-
         Mockito.when(telegramUserRepository.findById(anyLong())).thenReturn(Optional.empty());
-        Mockito.when(telegramUserRepository.save(Mockito.any(TelegramUser.class))).thenReturn(telegramUser);
+        Mockito.when(telegramUserRepository.save(Mockito.any(TelegramUser.class))).thenReturn(telegramUser1);
 
         try (MockedStatic<TelegramCustomLogger> mockedLogger = Mockito.mockStatic(TelegramCustomLogger.class)) {
             TelegramCustomLogger telegramCustomLogger = Mockito.mock(TelegramCustomLogger.class);
@@ -123,9 +127,7 @@ class TelegramUserServiceImplTest {
 
     @Test
     void checkTelegramUserRegistration_shouldUpdateTelegramUserStatusToMember_whenInputContainsStoredTelegramUserWhoseStatusIsKicked() {
-        TelegramUser telegramUser = new TelegramUser(1L, "test", "kicked", true);
-
-        Mockito.when(telegramUserRepository.findById(anyLong())).thenReturn(Optional.of(telegramUser));
+        Mockito.when(telegramUserRepository.findById(anyLong())).thenReturn(Optional.of(telegramUser3));
         Mockito.doNothing().when(telegramUserRepository).updateTelegramUserStatusById(anyLong(), anyString());
 
         try (MockedStatic<TelegramCustomLogger> mockedLogger = Mockito.mockStatic(TelegramCustomLogger.class)) {
@@ -141,9 +143,7 @@ class TelegramUserServiceImplTest {
 
     @Test
     void checkTelegramUserRegistration_shouldDoNothingWhenTelegramUserStatusAlreadyMember_whenInputContainsStoredTelegramUser() {
-        TelegramUser telegramUser = new TelegramUser(1L, "test", "member", true);
-
-        Mockito.when(telegramUserRepository.findById(anyLong())).thenReturn(Optional.of(telegramUser));
+        Mockito.when(telegramUserRepository.findById(anyLong())).thenReturn(Optional.of(telegramUser1));
         
         telegramUserServiceImpl.checkTelegramUserRegistration(1L, "test");
 
@@ -153,14 +153,13 @@ class TelegramUserServiceImplTest {
 
     @Test
     void save_shouldSaveTelegramUser_whenInputContainsValidTelegramUser() {
-        TelegramUser telegramUser = new TelegramUser(1L, "test", "member", true);
-        Mockito.when(telegramUserRepository.save(any(TelegramUser.class))).thenReturn(telegramUser);
+        Mockito.when(telegramUserRepository.save(any(TelegramUser.class))).thenReturn(telegramUser1);
 
         try (MockedStatic<TelegramCustomLogger> mockedLogger = Mockito.mockStatic(TelegramCustomLogger.class)) {
             TelegramCustomLogger telegramCustomLogger = Mockito.mock(TelegramCustomLogger.class);
             mockedLogger.when(TelegramCustomLogger::getInstance).thenReturn(telegramCustomLogger);
 
-            telegramUserServiceImpl.save(telegramUser);
+            telegramUserServiceImpl.save(telegramUser1);
 
             Mockito.verify(telegramUserRepository, Mockito.times(1)).save(any(TelegramUser.class));
         }
