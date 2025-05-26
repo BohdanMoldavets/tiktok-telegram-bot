@@ -30,13 +30,7 @@ public class AdministratorCommand implements Command {
         SendMessage sendMessage = null;
 
         if (userId.equals(ADMIN_ID) && splitMessage.length > 1) {
-
-            if(splitMessage[1].equals("add") || splitMessage[1].equals("delete")
-                    || splitMessage[1].equals("users") || splitMessage[1].equals("groups")
-                    || splitMessage[1].equals("ban") || splitMessage[1].equals("unban")) {
-                sendMessage = processCommand(splitMessage);
-            }
-
+            sendMessage = processCommand(splitMessage);
         }
         return sendMessage != null ? sendMessage : new UnknownCommand().execute(update);
     }
@@ -84,7 +78,7 @@ public class AdministratorCommand implements Command {
                         MessageText.COMMAND_ADMINISTRATOR_USER_UNBAN.getMessageText() + " - [" + userIdWhoWillBeUnbanned + "]"
                 );
 
-            case "groups":
+            case "channels":
                 return new SendMessage(
                         ADMIN_ID.toString(),
                         getChannelsMessage()
@@ -95,13 +89,14 @@ public class AdministratorCommand implements Command {
                         ADMIN_ID.toString(),
                         getUsersMessage()
                 );
+
+            default:
+                return null;
         }
-        return null;
     }
 
     private String getUsersMessage() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder
+        return new StringBuilder()
                 .append(MessageText.COMMAND_ADMINISTRATOR_ACTIVE_USERS_COUNT.getMessageText())
                 .append(" - [")
                 .append(telegramUserService.getAllActiveTelegramUsers().size())
@@ -109,8 +104,8 @@ public class AdministratorCommand implements Command {
                 .append(MessageText.COMMAND_ADMINISTRATOR_ALL_USERS_COUNT.getMessageText())
                 .append(" - [")
                 .append(telegramUserService.getAll().size())
-                .append("]");
-        return stringBuilder.toString();
+                .append("]")
+                .toString();
     }
 
     private String getChannelsMessage() {

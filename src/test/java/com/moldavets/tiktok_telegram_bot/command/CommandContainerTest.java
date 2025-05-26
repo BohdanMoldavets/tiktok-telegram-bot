@@ -22,11 +22,13 @@ class CommandContainerTest {
     @Mock
     TelegramChannelService telegramChannelService;
 
+    Long ADMIN_ID = 123L;
+
     CommandContainer commandContainer;
 
     @BeforeEach
     void setUp() {
-        commandContainer = new CommandContainer(telegramUserService, telegramChannelService, 123L);
+        commandContainer = new CommandContainer(telegramUserService, telegramChannelService, ADMIN_ID);
     }
 
     @Test
