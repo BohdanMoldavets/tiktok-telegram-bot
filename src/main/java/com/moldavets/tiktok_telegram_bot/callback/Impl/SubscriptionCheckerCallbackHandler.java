@@ -2,6 +2,7 @@ package com.moldavets.tiktok_telegram_bot.callback.Impl;
 
 import com.moldavets.tiktok_telegram_bot.bot.TelegramBot;
 import com.moldavets.tiktok_telegram_bot.callback.CallbackHandler;
+import com.moldavets.tiktok_telegram_bot.logger.Impl.TelegramCustomLogger;
 import com.moldavets.tiktok_telegram_bot.model.TelegramChannelStatus;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
@@ -50,7 +51,7 @@ public class SubscriptionCheckerCallbackHandler implements CallbackHandler {
             try {
                 ChatMember member = telegramBot.execute(new GetChatMember(channelId, userId));
 
-                if(member.getStatus() == null || Objects.equals(member.getStatus(), "left") || Objects.equals(member.getStatus(), "kicked")) {
+                if(Objects.equals(member.getStatus(), "left") || Objects.equals(member.getStatus(), "kicked")) {
                     return false;
                 }
             } catch (TelegramApiException e) {
@@ -69,7 +70,7 @@ public class SubscriptionCheckerCallbackHandler implements CallbackHandler {
                 return new SendMessage(userId.toString(), MessageText.CALLBACK_SUCCESSFUL_SUBSCRIPTION.getMessageText());
             }
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            TelegramCustomLogger.getInstance().error("userId " + userId + "|exception " + e.getMessage());
         }
         return SendMessage.builder()
                 .chatId(userId)
