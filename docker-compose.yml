@@ -16,6 +16,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tiktok-telegram-bot-database
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
+    restart: always
 
   postgres:
     image: postgres:15
@@ -26,3 +27,4 @@ services:
       - POSTGRES_DB=tiktok-telegram-bot-database
     ports:
       - "5431:5432"
+    restart: always
