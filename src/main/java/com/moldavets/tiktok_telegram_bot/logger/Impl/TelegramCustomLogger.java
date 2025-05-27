@@ -5,7 +5,6 @@ import com.moldavets.tiktok_telegram_bot.logger.CustomLogger;
 import com.moldavets.tiktok_telegram_bot.logger.LogType;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.LinkPreviewOptions;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.LocalDateTime;
@@ -60,7 +59,7 @@ public class TelegramCustomLogger implements CustomLogger {
         try {
             telegramBot.execute(sendMessage);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e); //todo
+            throw new RuntimeException(e);
         }
     }
 }

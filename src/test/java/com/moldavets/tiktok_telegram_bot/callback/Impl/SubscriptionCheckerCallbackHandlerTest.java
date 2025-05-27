@@ -5,6 +5,8 @@ import com.moldavets.tiktok_telegram_bot.model.Impl.TelegramChannel;
 import com.moldavets.tiktok_telegram_bot.model.TelegramChannelStatus;
 import com.moldavets.tiktok_telegram_bot.service.TelegramChannelService;
 import com.moldavets.tiktok_telegram_bot.service.TelegramUserService;
+import com.moldavets.tiktok_telegram_bot.utils.MessageText;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +15,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.telegram.telegrambots.meta.api.methods.groupadministration.GetChatMember;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberBanned;
+import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberLeft;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMemberMember;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -36,41 +40,139 @@ class SubscriptionCheckerCallbackHandlerTest {
 
     SubscriptionCheckerCallbackHandler subscriptionCheckerCallbackHandler;
 
+    private List<TelegramChannel> activeChannels;
+
     @BeforeEach
     void setUp() {
         subscriptionCheckerCallbackHandler = new SubscriptionCheckerCallbackHandler(telegramUserService, telegramChannelService, telegramBot);
-    }
-
-    @Test
-    void handle_shouldCheckUserSubscriptionsForRequiredChannels_whenInputDataIsValid() throws TelegramApiException {
-        List<TelegramChannel> activeChannels = List.of(
+        activeChannels = List.of(
                 new TelegramChannel(1L, "https://example.com", TelegramChannelStatus.ACTIVE),
                 new TelegramChannel(2L, "https://example2.com", TelegramChannelStatus.ACTIVE),
                 new TelegramChannel(3L, "https://example3.com", TelegramChannelStatus.ACTIVE)
         );
+    }
 
-        User user1 = new User();
-        user1.setId(1L);
-
-        User user2 = new User();
-        user2.setId(2L);
-
-        User user3 = new User();
-        user3.setId(3L);
-
+    @Test
+    void handle_shouldCheckUserSubscriptionsForRequiredChannels_whenInputDataIsValid() throws TelegramApiException {
         CallbackQuery callbackQuery = new CallbackQuery();
-        User user = new User();
+        Message message = new Message();
+        message.setMessageId(654);
+        callbackQuery.setMessage(message);
 
+        User user = new User();
         user.setId(123L);
+
         callbackQuery.setFrom(user);
 
         Mockito.when(telegramChannelService.getAllWhereStatusIsActive()).thenReturn(activeChannels);
         Mockito.when(telegramBot.execute(any(GetChatMember.class)))
-                .thenReturn(new ChatMemberMember(user1))
-                .thenReturn(new ChatMemberMember(user2))
-                .thenReturn(new ChatMemberMember(user3));
+                .thenReturn(new ChatMemberMember(user))
+                .thenReturn(new ChatMemberMember(user))
+                .thenReturn(new ChatMemberMember(user));
+        Mockito.doNothing().when(telegramBot).execute(any(DeleteMessage.class));
+        Mockito.doNothing().when(telegramUserService).updateSubscribeById(anyLong(), anyBoolean());
 
         SendMessage actual = (SendMessage) subscriptionCheckerCallbackHandler.handle(callbackQuery);
-        //todo
+
+        Assertions.assertEquals(user.getId().toString(), actual.getChatId());
+        Assertions.assertEquals(MessageText.CALLBACK_SUCCESSFUL_SUBSCRIPTION.getMessageText(), actual.getText());
+
+        Mockito.verify(telegramChannelService, Mockito.times(1))
+                .getAllWhereStatusIsActive();
+        Mockito.verify(telegramBot, Mockito.times(activeChannels.size()))
+                .execute(any(GetChatMember.class));
+        Mockito.verify(telegramBot, Mockito.times(1))
+                .execute(any(DeleteMessage.class));
+        Mockito.verify(telegramUserService, Mockito.times(1))
+                .updateSubscribeById(anyLong(), anyBoolean());
+    }
+
+    @Test
+    void handle_shouldReturnFailedSubscriptionMessage_whenUserLeftFromAtLeastOneRequiredChannel () throws TelegramApiException {
+        CallbackQuery callbackQuery = new CallbackQuery();
+        Message message = new Message();
+        message.setMessageId(654);
+        callbackQuery.setMessage(message);
+
+        User user = new User();
+        user.setId(123L);
+
+        callbackQuery.setFrom(user);
+
+        Mockito.when(telegramChannelService.getAllWhereStatusIsActive()).thenReturn(activeChannels);
+        Mockito.when(telegramBot.execute(any(GetChatMember.class)))
+                .thenReturn(new ChatMemberMember(user))
+                .thenReturn(new ChatMemberLeft(user))
+                .thenReturn(new ChatMemberMember(user));
+
+        SendMessage actual = (SendMessage) subscriptionCheckerCallbackHandler.handle(callbackQuery);
+
+        Assertions.assertEquals(user.getId().toString(), actual.getChatId());
+        Assertions.assertEquals(MessageText.CALLBACK_FAILED_SUBSCRIPTION.getMessageText(), actual.getText());
+
+        Mockito.verify(telegramChannelService, Mockito.times(1))
+                .getAllWhereStatusIsActive();
+        Mockito.verify(telegramBot, Mockito.times(2))
+                .execute(any(GetChatMember.class));
+    }
+
+    @Test
+    void handle_shouldReturnFailedSubscriptionMessage_whenUserKickedFromAtLeastOneRequiredChannel () throws TelegramApiException {
+        CallbackQuery callbackQuery = new CallbackQuery();
+        Message message = new Message();
+        message.setMessageId(654);
+        callbackQuery.setMessage(message);
+
+        User user = new User();
+        user.setId(123L);
+
+        callbackQuery.setFrom(user);
+
+        Mockito.when(telegramChannelService.getAllWhereStatusIsActive()).thenReturn(activeChannels);
+        Mockito.when(telegramBot.execute(any(GetChatMember.class)))
+                .thenReturn(new ChatMemberBanned(user, 0)) // Date when restrictions will be lifted for this user; Unix time. If 0, then the user is banned forever
+                .thenReturn(new ChatMemberMember(user))
+                .thenReturn(new ChatMemberMember(user));
+
+        SendMessage actual = (SendMessage) subscriptionCheckerCallbackHandler.handle(callbackQuery);
+
+        Assertions.assertEquals(user.getId().toString(), actual.getChatId());
+        Assertions.assertEquals(MessageText.CALLBACK_FAILED_SUBSCRIPTION.getMessageText(), actual.getText());
+
+        Mockito.verify(telegramChannelService, Mockito.times(1))
+                .getAllWhereStatusIsActive();
+        Mockito.verify(telegramBot, Mockito.times(1))
+                .execute(any(GetChatMember.class));
+    }
+
+    @Test
+    void handle_shouldReturnFailedSubscriptionMessage_whenChannelKickedTelegramBotWhichTryingToGetChatMember () throws TelegramApiException {
+        CallbackQuery callbackQuery = new CallbackQuery();
+        Message message = new Message();
+        message.setMessageId(654);
+        callbackQuery.setMessage(message);
+
+        User user = new User();
+        user.setId(123L);
+
+        callbackQuery.setFrom(user);
+
+        Mockito.when(telegramChannelService.getAllWhereStatusIsActive()).thenReturn(activeChannels);
+        Mockito.when(telegramBot.execute(any(GetChatMember.class)))
+                .thenReturn(new ChatMemberMember(user))
+                .thenReturn(new ChatMemberMember(user))
+                .thenThrow(TelegramApiException.class);
+
+        Mockito.doNothing().when(telegramChannelService).updateStatusById(anyLong(), any(TelegramChannelStatus.class));
+
+        SendMessage actual = (SendMessage) subscriptionCheckerCallbackHandler.handle(callbackQuery);
+
+        Assertions.assertEquals(user.getId().toString(), actual.getChatId());
+        Assertions.assertEquals(MessageText.CALLBACK_FAILED_SUBSCRIPTION.getMessageText(), actual.getText());
+
+        Mockito.verify(telegramChannelService, Mockito.times(1))
+                .getAllWhereStatusIsActive();
+        Mockito.verify(telegramBot, Mockito.times(activeChannels.size()))
+                .execute(any(GetChatMember.class));
     }
 }
